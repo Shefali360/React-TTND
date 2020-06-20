@@ -1,0 +1,23 @@
+.list{
+    margin-top:20px;
+}
+
+@media (min-width:768px) and (max-width:1023px){
+    .sidebar{
+        position: absolute;
+        width:50%;
+        }
+        .list{
+            margin-top:0
+        }
+}
+
+@media(max-width:767px){
+    .sidebar{
+        position: absolute;
+        width:50%;
+        }
+        .list{
+            margin-top:0
+        }
+}

@@ -1,0 +1,17 @@
+.notfound{
+    text-align: center;
+    padding:30px 0;
+}
+
+.notfound img{
+    width:300px;
+    margin-bottom: 20px;
+}
+
+.notfound p{
+    font-size:22px;
+    font-weight: bold;
+    color:#D8763A;
+
+}
+

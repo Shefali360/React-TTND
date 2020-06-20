@@ -1,0 +1,109 @@
+.complaintsList{
+    margin-top:20px;
+    border-radius:5px;
+    border:2px solid #ccc;
+    margin-bottom: 20px;
+    position: relative;
+    width:100%;
+}
+
+.complaintsList h4{
+    padding:10px 20px;
+    background-color: #eeeeee;
+    border-bottom: 2px solid #ccc;
+}
+
+.complaintsList table{
+    width:100%;
+    background-color: #ffffff;   
+    border-collapse: collapse;
+    border-style: hidden;
+    table-layout:fixed;
+    max-height:300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+
+.complaintsList table::-webkit-scrollbar {
+    width: 3px;
+    background: #dfe1e8;
+}
+
+.complaintsList table::-webkit-scrollbar-thumb {
+    background: #7a7d89;
+
+}
+.complaintsList tbody {
+    display: table; 
+}
+
+.complaintsList thead, tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.complaintsList thead {
+    border-top: 0;
+    position: sticky;
+    z-index:1;
+    top:0;
+    left:0;
+    background-color: #fff;
+}
+
+.complaintsList tr:nth-child(even) { background: #eee; }
+
+.search{
+    width:200px;
+}
+
+.open{
+    color:#e04a32;
+}
+
+.progress{
+    color:#1a73e8;
+}
+
+.closed{
+    color:#2ec020;
+}
+
+td:last-child{
+    font-weight:bold;
+}
+.complaintsList th{
+    color:gray;
+    border:1px solid #ccc;
+}
+
+.complaintsList td{
+    text-align: center;
+    border:1px solid #ccc;
+}
+.complaintsList th,td{
+    padding:10px;
+}
+
+.issueId{
+    background-color: transparent;
+    border:none;
+    color:blue;
+    text-decoration: underline;
+    cursor:pointer;
+    font-size:16px;
+    outline:0;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+.tableContainer{
+    position: relative;
+}
+
+@media (min-width:768px) and (max-width:1023px){
+    .complaintsList table{
+       max-height: 390px;
+    }
+}

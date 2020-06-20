@@ -1,0 +1,20 @@
+.Logout {
+    background-color: #eee;
+    border: none;
+    font-size: 17px;
+    font-weight: bold;
+    color: #D8763A;
+    margin-right: 60px;
+    outline: 0;
+    cursor: pointer;
+}
+
+@media(max-width:767px) {
+    .Logout {
+        margin-right: 20px;
+        font-size: 14px;
+        background-color: #D8763A;
+        color: #fff;
+    }
+
+}

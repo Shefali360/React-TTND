@@ -1,0 +1,69 @@
+.top{
+    background-color: #eee;
+}
+
+.navbar{
+height:50px;
+display: flex;
+justify-content: space-between;
+}
+
+.logo{
+    z-index:99;
+}
+.navbar img{
+    height:100px;
+    width:120px;
+    margin-left:60px;
+   
+}
+
+.topDiv{
+    background:url(../../Images//thoughts2.jpeg) center center/cover;
+    height:50vh;
+    position:relative;
+}
+
+.innerDiv{
+    max-width:50%;
+    position:absolute;
+    top:30%;
+    left:7%;
+}
+
+.innerDiv p{
+    color: #fff;
+    font-size: 35px;
+    font-weight: bold;
+    text-transform: uppercase;
+
+}
+
+
+@media (min-width:768px) and (max-width:1023px){
+    .topDiv{
+        height:30vh;
+    }
+    .innerDiv p{
+       font-size:25px;
+    
+    }
+}
+
+@media(max-width:767px){
+    .navbar{
+        height:70px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #D8763A;
+        background-color: #D8763A;
+    }
+.navbar img{
+    margin-left:20px;
+    height:70px;
+    width:100px;
+}
+
+.topDiv{
+    display: none;
+}
+}

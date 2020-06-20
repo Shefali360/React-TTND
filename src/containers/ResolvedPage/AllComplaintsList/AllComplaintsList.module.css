@@ -1,0 +1,318 @@
+.card{
+    position: relative;
+}
+
+.table{
+    position: relative;
+}
+.table td:nth-child(2){
+    color:blue;
+    text-decoration: underline;
+    cursor: pointer;
+} 
+
+.filterFields{
+    display: flex;
+    justify-content: space-evenly;
+    background-color: #fff;
+    border-bottom: 2px solid #ccc;
+    padding:10px 0px;
+}
+.check{
+    align-self: center;
+    color:#2ec020;
+    font-size:20px;
+    cursor:pointer;
+}
+.check:hover{
+    color:#fff;
+    background-color:#2ec020;
+    padding:5px;
+    border-radius: 50%;
+   
+}
+.undo{
+    align-self: center;
+    color:#1a73e8;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.undo:hover{
+    color:#fff;
+    background-color:#1a73e8;
+    padding:5px;
+    border-radius: 50%;
+}
+.search{
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+.search input{
+    height:100%;
+    width:100px;
+    padding-left:10px;
+    outline:0;
+    border:0px;
+    border-radius: 5px;
+}
+
+.select {
+    background-color: #fff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    padding-left:10px;
+    height:27px;
+    width:82px;
+    outline:0;
+    border:1px solid #ccc;
+    border-radius:4px;
+}
+
+.popup{
+    border:2px solid #ccc;
+    padding:15px;
+    position: absolute;
+    top:50%;
+    left:70%;
+    transform: translate(-50%,-30%);
+    background-color: #fff;
+    margin-bottom: 10px;
+    margin-right: 30px;
+    max-height:150px;
+    max-width:250px;
+}
+
+.popupIssueId{
+    font-size:14px;
+    font-weight: bold;
+    color:blue;
+    text-decoration: underline;
+    margin-bottom:10px;
+}
+
+.close{
+    position: absolute;
+    top:-10px;
+    right: 0;
+}
+.popup h5{
+    color:black;
+    margin-bottom:10px;
+}
+
+.popup .formdata{
+    display:flex;
+    justify-content: space-around;
+}
+.popup form input{
+    width:38px;
+    height:25px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    outline:0;
+    padding-left:5px;
+}
+.popup button{
+    margin-top:10px;
+    padding:5px;
+    border:none;
+    background-color: #D8763A;
+    color:#fff;
+    border-radius:4px;
+}
+
+
+.popup button:disabled{
+    background-color: #ccc;
+    color:#D8763A;
+}
+
+.overlay {
+    position: absolute;
+    top:0;
+    width: 100%;
+    height: 100%; 
+    background-color: rgba(0,0,0,0.3);  
+    z-index:5;
+  }
+
+.display{
+    display: none;
+}
+
+.displaydiv{
+    display:block;
+}
+
+.open{
+    color:#e04a32 !important;
+}
+
+.open option{
+    color:gray;
+}
+
+.progress{
+    color:#1a73e8 !important;
+}
+
+.progress option{
+    color:gray;
+}
+.closed{
+    color:#2ec020 !important;
+}
+
+.closed option{
+    color:gray;
+}
+
+.message{
+    font-size:14px;
+    color:#e04a32;
+    font-weight: bold;
+}
+
+.apply{
+    display: none;
+}
+
+.reset{
+    display: none;
+}
+
+.issueId{
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+.errormsg{
+    color:#e04a32;
+    font-size:14px;
+    font-weight: bold;
+    margin-top:20px;
+    margin-right:10px;
+}
+
+@media (min-width:768px) and (max-width:1023px){ 
+    .popup{
+        height:120px;
+        width:200px;
+    }
+    .popup h5{
+        text-align: center;
+    }
+    .popup form input{
+        width:60px;
+        height:40px; 
+    }
+    
+}
+
+@media(max-width:767px){
+    .popup{
+        width:160px;
+    }
+    .filterFields{
+        display: block;  
+    }
+
+    .search{
+        width: 90%;
+        margin:0 auto;
+    }
+    .search input{
+        height:40px;
+    }
+
+    .check{
+        display: none;
+    }
+
+    .undo{
+        display: none;
+    }
+
+    .mobileButtons{
+        display:flex;
+        margin-top:10px;
+        justify-content: space-evenly;
+    }
+    .apply{
+        display:inline-block;
+        background-color:#2ec020;
+        border: 1px solid #ccc;
+        padding:5px;
+        border-radius: 4px;
+        color:#fff;
+        font-weight: bold;
+        outline: 0;
+       
+    }
+    .reset{
+        display:inline-block;
+        background-color:#1a73e8;
+        border: 1px solid #ccc;
+        padding:5px;
+        border-radius: 4px;
+        color:#fff;
+        font-weight: bold;
+        outline: 0;
+    }
+    .table {
+        background-color: #fff;
+        min-height:400px;
+    }
+    .table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr {
+        border: 1px solid #ccc;
+        margin-top: 1rem;
+        background-color: #f2f2f2;
+    }
+    tr:last-child {
+        border: none;
+    }
+    td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        min-height: 40px;
+        line-height: 40px;
+        max-height: 50px;
+    }
+    td:before {
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+    td:nth-of-type(1):before {
+        content: "Department";
+    }
+    td:nth-of-type(2):before {
+        content: "Issue Id";
+    }
+    td:nth-of-type(3):before {
+        content: "Locked By";
+    }
+    td:nth-of-type(4):before {
+        content: "Assigned to";
+    }
+    td:nth-of-type(5):before {
+        content: "Status";
+    }
+
+}

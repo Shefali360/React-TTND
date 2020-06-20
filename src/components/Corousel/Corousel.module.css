@@ -1,0 +1,47 @@
+.carouselContainer {
+    position: relative;
+    min-height: 300px;
+    margin-bottom:15px;
+}
+
+.carouselContainer .imageContainer {
+   height:300px;
+   width:100%;
+}
+
+.carouselContainer .imageContainer img {
+    width: 100%;
+    height: 100%;
+}
+
+.carouselContainer .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: 0.2s ease-in-out;
+    text-align: center;
+}
+
+.carouselContainer .arrow:hover {
+    color: #D8763A;
+}
+
+.prev {
+    padding-right: 2px;
+    left: 10px;
+    border:1px solid #ccc;
+    outline:0;
+}
+
+.next {
+    padding-left: 2px;
+    right: 10px;
+    border:1px solid #ccc;
+    outline:0;
+}

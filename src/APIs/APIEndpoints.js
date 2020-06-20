@@ -1,0 +1,10 @@
+const PORT = 3030;
+export const serverURI = `http://localhost:${PORT}`;
+export const buzzEndpoint = "/buzz";
+export const buzzLikeEndpoint = "/buzz/like";
+export const buzzDislikeEndpoint = "/buzz/dislike";
+export const complaintsEndpoint = "/complaint";
+export const allComplaintsEndpoint = "/complaint/all";
+export const adminEndpoint = "/admin";
+export const authTokenEndpoint = "/authToken";
+export const logoutEndpoint = "/logout";

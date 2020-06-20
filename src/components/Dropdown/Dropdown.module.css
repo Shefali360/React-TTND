@@ -1,0 +1,33 @@
+.dropdown{
+    display: inline-block;
+    margin:0 15px;
+    position: relative;
+    color:gray;
+    font-weight: bold;
+}
+.dropdown:after{
+    content:'\f107';
+    font-family:FontAwesome;
+    margin-left:-10px;
+    position: absolute;
+    top:7px;
+    pointer-events: none;
+}
+
+.dropdown select{
+    border:none;
+    width:100%;
+    background:none;
+    color:gray;
+    font-weight: bold;
+    height:30px;
+    font-size:14px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline:0;
+    padding:0 15px;
+}
+.dropdown select::-ms-expand{
+    display:none;
+}
