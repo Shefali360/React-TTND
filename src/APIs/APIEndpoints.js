@@ -6,5 +6,5 @@ export const buzzDislikeEndpoint = "/buzz/dislike";
 export const complaintsEndpoint = "/complaint";
 export const allComplaintsEndpoint = "/complaint/all";
 export const adminEndpoint = "/admin";
-export const authTokenEndpoint = "/authToken";
+export const authTokenEndpoint = "/signin";
 export const logoutEndpoint = "/logout";
