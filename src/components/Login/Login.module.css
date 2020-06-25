@@ -18,7 +18,7 @@
     transform: translate(-50%,-50%);
     text-align:center;
     background-color: #ffffff;
-    padding:0 80px;
+    width:35%;
 }
 
 .loginDiv img{
@@ -31,16 +31,23 @@
     margin-bottom: 18px;
 }
 
+.errorMsg{
+    font-weight:bold;
+    font-size:13px;
+    color:#363998;
+}
+
 
 @media (min-width:768px) and (max-width:1023px){ 
 .loginDiv{
-    padding: 0px 150px;
     box-sizing: border-box;
+    width:50%;
 }
 }
 @media(max-width:767px){
-   .loginDiv{ padding: 0px 80px;
+   .loginDiv{ 
     box-sizing: border-box;
+    width:70%;
    }
 
    .loginDiv h5{

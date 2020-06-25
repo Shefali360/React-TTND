@@ -14,8 +14,10 @@ class AuthToken extends Component {
     if(validToken){
       this.props.checkAdmin();
        return <Redirect to ='/buzz'/>
-    }else if(this.props.error){
-      return <Redirect to ='/login'/>
+    }else if(this.props.tokenError){
+     let error=this.props.tokenError;
+     console.log(error.response);
+      return <Redirect to ={{pathname:'/login',state:{errorCode:error.response.data.errorCode,message:error.response.data.message}}}/>
       }
     return <Spinner/>;
   }
@@ -24,7 +26,7 @@ class AuthToken extends Component {
 const mapStateToProps = (state) => {
   return {
     data: state.auth.token,
-    error: state.auth.error,
+    tokenError: state.auth.tokenError,
     admin:state.adminCheck.adminPrivilege
   };
 };

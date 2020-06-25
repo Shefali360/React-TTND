@@ -1,17 +1,26 @@
 import React,{Component} from 'react';
 import styles from './Login.module.css';
 import ttn from '../../Images/logo.jpeg';
-import Loginbutton from './LoginButton/LoginButton';
+import Entrybutton from './EntryButton/EntryButton';
 
 class Login extends Component{
+
+    determineEndpoint=(endpoint)=>{
+        localStorage.setItem("endpoint",endpoint);
+    }
     render(){
+        console.log(this.props.location.state);
+        let errorState=this.props.location.state;
         return(
             <div className={styles.mainImg}>
                   <div className={styles.overlay}>
                 <div className={styles.loginDiv}>
                         <img src={ttn} alt='TTN Logo'/>
                         <h5>Create Your Own Buzz</h5>
-                        <Loginbutton/>
+                        {(errorState&&errorState.errorCode==="DUPLICATE_KEY")?<span className={styles.errorMsg}>User already exists</span>:null}
+                        <Entrybutton text="Sign up with gmail" click={()=>this.determineEndpoint("signup")}/>
+                        {(errorState&&errorState.errorCode==="UNAUTHORIZED_ACCESS")?<p className={styles.errorMsg}>Please signup first</p>:null}
+                        <Entrybutton text="Sign in with gmail" click={()=>this.determineEndpoint("signin")}/>
                 </div>
             </div>
             </div>

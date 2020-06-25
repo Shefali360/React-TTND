@@ -6,7 +6,7 @@ const token=localStorage.getItem("token")?JSON.parse(localStorage.getItem("token
 
 const initialState={
     token:token,
-    error:false,
+    tokenError:null,
     
 }
 
@@ -18,7 +18,7 @@ return(updateObject(state,{
 }
 
 const tokenReceiveFailed=(state,action)=>{
-    return(updateObject(state,{error:true}))
+    return(updateObject(state,{tokenError:action.error}))
 }
 
 const reducer=(state=initialState,action)=>{
