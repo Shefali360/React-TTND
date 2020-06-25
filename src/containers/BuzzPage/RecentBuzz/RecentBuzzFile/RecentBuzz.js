@@ -6,6 +6,7 @@ import {authorizedRequestsHandler} from '../../../../APIs/APIs';
 import {buzzLikeEndpoint} from '../../../../APIs/APIEndpoints';
 import {buzzDislikeEndpoint} from '../../../../APIs/APIEndpoints';
 import { errorOccurred } from "../../../../store/actions";
+import {serverURI,pictureURI} from '../../../../APIs/APIEndpoints';
 
 
 class RecentBuzz extends Component {
@@ -196,7 +197,8 @@ class RecentBuzz extends Component {
             {this.props.images.length > 0 ? (
               <Corousel image={this.props.images} />
             ) : null}
-            <span className={styles.userId}>{this.props.email}</span>
+            <img className={styles.profilePic} src={serverURI+pictureURI+'/'+ encodeURIComponent(this.props.picture)} alt="Profile Pic"/> 
+            <span className={styles.userId}>{this.props.name}</span>
             <span className={styles.duration}>
               {this.timed(this.props.duration)}
             </span>

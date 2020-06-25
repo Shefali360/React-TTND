@@ -1,5 +1,7 @@
 const PORT = 3030;
 export const serverURI = `http://localhost:${PORT}`;
+export const buzzImagesURI = `/Images`;
+export const pictureURI = `/ProfilePic`;
 export const buzzEndpoint = "/buzz";
 export const buzzLikeEndpoint = "/buzz/like";
 export const buzzDislikeEndpoint = "/buzz/dislike";

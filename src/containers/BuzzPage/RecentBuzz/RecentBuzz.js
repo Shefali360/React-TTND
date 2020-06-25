@@ -46,6 +46,14 @@ class RecentBuzzData extends Component {
        
       })
   }
+
+  // dispatcher=()=>{
+    
+  //   this.props.dispatch({
+  //       type: 'USER_ID',
+  //       payload:this.state.buzz._id
+  //   })
+  // }
   
   componentDidMount() {
     this.getBuzz(this.state.skip);
@@ -75,6 +83,7 @@ class RecentBuzzData extends Component {
        buzzData=<p>No buzz going around.You need to post something to create one!</p>
      }else{
       let count = this.state.buzz;
+      console.log(count);
       buzzData = count.map((buzz) => {
       const todayDate = new Date();
       const time = todayDate.getTime();
@@ -96,7 +105,7 @@ class RecentBuzzData extends Component {
             return (
               <li key={buzz._id} >
                 <RecentBuzz 
-                email={buzz.userId} description={buzz.description} likeCount={buzz.likes} dislikeCount={buzz.dislikes}
+               name={buzz.user.name} picture={buzz.user.picture} description={buzz.description} likeCount={buzz.likes} dislikeCount={buzz.dislikes}
                 dayFormat={dayFormat} monthFormat={monthFormat}
                  duration={dur} images={imageData} alt={altData} id={buzz._id} liked={buzz.liked}
                  disliked={buzz.disliked} yearFormat={year}
@@ -125,6 +134,9 @@ class RecentBuzzData extends Component {
 }
  }
 
+// const mapStateToProps=(state)=>{
+
+// }
 
 const mapDispatchToProps=(dispatch)=>{
   return{

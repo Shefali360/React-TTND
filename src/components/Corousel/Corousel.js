@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import styles from './Corousel.module.css';
-import {serverURI} from '../../APIs/APIEndpoints';
+import {serverURI,buzzImagesURI} from '../../APIs/APIEndpoints';
 
 class Corousel extends Component{
     state = {
@@ -24,7 +24,7 @@ class Corousel extends Component{
         return(
             <div className={styles.carouselContainer}>
                 <div className={styles.imageContainer}>
-                    <img src={serverURI+"/"+ images[this.state.idx]} alt={images[this.state.idx]}/>
+                    <img src={serverURI+buzzImagesURI+"/"+encodeURIComponent(images[this.state.idx])} alt={images[this.state.idx]}/>
                 </div>
                 {(images.length>1)?
                 <div><button className={[styles.arrow,styles.prev].join(' ')} onClick={this.prev}><i className="fa fa-angle-left"/></button>

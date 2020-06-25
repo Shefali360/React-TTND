@@ -1,6 +1,6 @@
 .dropdown{
     display: inline-block;
-    margin:0 15px;
+    margin:7px 15px;
     position: relative;
     color:gray;
     font-weight: bold;
@@ -10,7 +10,6 @@
     font-family:FontAwesome;
     margin-left:-10px;
     position: absolute;
-    top:7px;
     pointer-events: none;
 }
 
@@ -20,7 +19,6 @@
     background:none;
     color:gray;
     font-weight: bold;
-    height:30px;
     font-size:14px;
     appearance: none;
     -webkit-appearance: none;
