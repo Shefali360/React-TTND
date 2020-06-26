@@ -3,8 +3,7 @@ import styles from "./RecentBuzz.module.css";
 import Corousel from "../../../../components/Corousel/Corousel";
 import { connect } from "react-redux";
 import { authorizedRequestsHandler } from "../../../../APIs/APIs";
-import { buzzLikeEndpoint } from "../../../../APIs/APIEndpoints";
-import { buzzDislikeEndpoint } from "../../../../APIs/APIEndpoints";
+import {buzzLikeEndpoint,buzzDislikeEndpoint } from "../../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../../store/actions";
 import { serverURI, pictureURI } from "../../../../APIs/APIEndpoints";
 
@@ -180,6 +179,23 @@ class RecentBuzz extends Component {
     }
   };
 
+  // deletePost=()=>{
+  //   authorizedRequestsHandler()
+  //   .delete(buzzEndpoint + `/${this.props.buzz._id}`)
+  //   .then((res) => {
+  //     console.log(res);
+  //   })
+  //   .catch((err) => {
+  //     const errorCode = err.response.data.errorCode;
+  //     if (errorCode === "INVALID_TOKEN") {
+  //       this.props.errorOccurred();
+  //     }
+  //     if (err.response.status === 500) {
+  //       this.setState({ networkErr: true });
+  //     }
+  //   });
+
+  // }
   render() {
     // console.log(this.history.props.location);
     return (
@@ -188,6 +204,18 @@ class RecentBuzz extends Component {
           ? alert("Please check your internet connection")
           : null}
         <div className={styles.buzzes}>
+        <span className={styles.editButtonsDiv}>
+            <i
+              className={
+                ["fa fa-edit",styles.editButtons].join(' ')}
+              
+            ></i>
+            <i
+              className={
+               ["fa fa-trash",styles.editButtons].join(' ')}
+               onClick={this.props.deleteClick}
+            ></i>
+          </span>
           <span className={styles.date}>
             {this.props.dayFormat}/<br />
             {this.props.monthFormat}

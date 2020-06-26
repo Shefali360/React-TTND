@@ -73,6 +73,24 @@ class RecentBuzzData extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  deletePost=()=>{
+    authorizedRequestsHandler()
+    .delete(buzzEndpoint + `/${this.state.buzz._id}`)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    });
+
+  }
+
   applyFilters = () => {
     const filters = {};
     if (this.state.category) {
@@ -134,6 +152,24 @@ class RecentBuzzData extends Component {
         }
       });
   };
+
+  deletePost=(id)=>{
+    authorizedRequestsHandler()
+    .delete(buzzEndpoint + `/${id}`)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    });
+
+  }
   render() {
     let buzzData = null;
     if (this.state.spinner) {
@@ -180,6 +216,7 @@ class RecentBuzzData extends Component {
               images={imageData}
               alt={altData}
               yearFormat={year}
+              deleteClick={()=>this.deletePost(buzz._id)}
             />
           </li>
         );
