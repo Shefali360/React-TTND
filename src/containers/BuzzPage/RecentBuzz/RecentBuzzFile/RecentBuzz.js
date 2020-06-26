@@ -2,21 +2,20 @@ import React, { Component } from "react";
 import styles from "./RecentBuzz.module.css";
 import Corousel from "../../../../components/Corousel/Corousel";
 import { connect } from "react-redux";
-import {authorizedRequestsHandler} from '../../../../APIs/APIs';
-import {buzzLikeEndpoint} from '../../../../APIs/APIEndpoints';
-import {buzzDislikeEndpoint} from '../../../../APIs/APIEndpoints';
+import { authorizedRequestsHandler } from "../../../../APIs/APIs";
+import { buzzLikeEndpoint } from "../../../../APIs/APIEndpoints";
+import { buzzDislikeEndpoint } from "../../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../../store/actions";
-import {serverURI,pictureURI} from '../../../../APIs/APIEndpoints';
-
+import { serverURI, pictureURI } from "../../../../APIs/APIEndpoints";
 
 class RecentBuzz extends Component {
   state = {
-    likeCount: this.props.likeCount || 0,
-    dislikeCount: this.props.dislikeCount || 0,
-    liked: this.props.liked || false,
-    disliked: this.props.disliked || false,
-    updateReview:false,
-    networkErr:false
+    likeCount: this.props.buzz.likeCount || 0,
+    dislikeCount: this.props.buzz.dislikeCount || 0,
+    liked: this.props.buzz.liked || false,
+    disliked: this.props.buzz.disliked || false,
+    updateReview: false,
+    networkErr: false,
   };
 
   timed = (duration) => {
@@ -43,50 +42,52 @@ class RecentBuzz extends Component {
   };
 
   toggleLike = () => {
-    this.setState({updateReview:true});
+    this.setState({ updateReview: true });
     const liked = !this.state.liked;
     if (liked) {
       this.setState({
         likeCount: this.state.likeCount + 1,
-        liked: liked
+        liked: liked,
       });
       authorizedRequestsHandler()
-        .patch(buzzLikeEndpoint+`/${this.props.id}`, null)
+        .patch(buzzLikeEndpoint + `/${this.props.buzz._id}`, null)
         .then((res) => {
-           this.setState({updateReview:false});
+          this.setState({ updateReview: false });
         })
-        .catch((err) => {this.setState({updateReview:false})
-        const errorCode=err.response.data.errorCode;
-        if(errorCode==="INVALID_TOKEN"){
-           this.props.errorOccurred();
-        }
-        if(err.response.status===500){
-           this.setState({networkErr:true});
-        }
-      });
+        .catch((err) => {
+          this.setState({ updateReview: false });
+          const errorCode = err.response.data.errorCode;
+          if (errorCode === "INVALID_TOKEN") {
+            this.props.errorOccurred();
+          }
+          if (err.response.status === 500) {
+            this.setState({ networkErr: true });
+          }
+        });
 
       if (this.state.disliked) {
-         this.setState({
+        this.setState({
           dislikeCount: this.state.dislikeCount - 1,
           disliked: false,
         });
         authorizedRequestsHandler()
           .patch(
-            buzzDislikeEndpoint+`/${this.props.id}?reverse=1`,
+            buzzDislikeEndpoint + `/${this.props.buzz._id}?reverse=1`,
             null
           )
           .then((res) => {
-             this.setState({updateReview:false});
-           
+            this.setState({ updateReview: false });
           })
-          .catch((err) => {this.setState({updateReview:false});
-          const errorCode=err.response.data.errorCode;
-          if(errorCode==="INVALID_TOKEN"){
-             this.props.errorOccurred();
-          }
-          if(err.response.status===500){
-            this.setState({networkErr:true});
-          }});
+          .catch((err) => {
+            this.setState({ updateReview: false });
+            const errorCode = err.response.data.errorCode;
+            if (errorCode === "INVALID_TOKEN") {
+              this.props.errorOccurred();
+            }
+            if (err.response.status === 500) {
+              this.setState({ networkErr: true });
+            }
+          });
       }
     } else {
       this.setState({
@@ -94,116 +95,133 @@ class RecentBuzz extends Component {
         liked: liked,
       });
       authorizedRequestsHandler()
-        .patch(
-          buzzLikeEndpoint+`/${this.props.id}?reverse=1`,
-          null
-        )
+        .patch(buzzLikeEndpoint + `/${this.props.buzz._id}?reverse=1`, null)
         .then((res) => {
-          this.setState({updateReview:false})        })
-        .catch((err) => {this.setState({updateReview:false});
-        const errorCode=err.response.data.errorCode;
-        if(errorCode==="INVALID_TOKEN"){
-           this.props.errorOccurred();
-        }
-        if(err.response.status===500){
-           this.setState({networkErr:true});
-        }});
+          this.setState({ updateReview: false });
+        })
+        .catch((err) => {
+          this.setState({ updateReview: false });
+          const errorCode = err.response.data.errorCode;
+          if (errorCode === "INVALID_TOKEN") {
+            this.props.errorOccurred();
+          }
+          if (err.response.status === 500) {
+            this.setState({ networkErr: true });
+          }
+        });
     }
   };
 
   toggleDislike = () => {
     const dislike = !this.state.disliked;
-    this.setState({updateReview:true});
+    this.setState({ updateReview: true });
     if (dislike) {
       this.setState({
         dislikeCount: this.state.dislikeCount + 1,
         disliked: dislike,
       });
       authorizedRequestsHandler()
-        .patch(  buzzDislikeEndpoint+`/${this.props.id}`, null)
+        .patch(buzzDislikeEndpoint + `/${this.props.buzz._id}`, null)
         .then((res) => {
-           this.setState({updateReview:false});
-          
+          this.setState({ updateReview: false });
         })
-        .catch((err) => {this.setState({updateReview:false});
-        const errorCode=err.response.data.errorCode;
-        if(errorCode==="INVALID_TOKEN"){
-           this.props.errorOccurred();
-        }
-        if(err.response.status===500){
-           this.setState({networkErr:true});
-        }});
+        .catch((err) => {
+          this.setState({ updateReview: false });
+          const errorCode = err.response.data.errorCode;
+          if (errorCode === "INVALID_TOKEN") {
+            this.props.errorOccurred();
+          }
+          if (err.response.status === 500) {
+            this.setState({ networkErr: true });
+          }
+        });
 
       if (this.state.liked) {
-         this.setState({
+        this.setState({
           likeCount: this.state.likeCount - 1,
           liked: false,
         });
         authorizedRequestsHandler()
-          .patch(
-            buzzLikeEndpoint+`/${this.props.id}?reverse=1`,
-            null
-          )
+          .patch(buzzLikeEndpoint + `/${this.props.buzz._id}?reverse=1`, null)
           .then((res) => {
-             this.setState({updateReview:false});
-            
+            this.setState({ updateReview: false });
           })
-          .catch((err) => {this.setState({updateReview:false});
-          const errorCode=err.response.data.errorCode;
-          if(errorCode==="INVALID_TOKEN"){
-             this.props.errorOccurred();
-          }
-          if(err.response.status===500){
-             this.setState({networkErr:true});
-          }});
+          .catch((err) => {
+            this.setState({ updateReview: false });
+            const errorCode = err.response.data.errorCode;
+            if (errorCode === "INVALID_TOKEN") {
+              this.props.errorOccurred();
+            }
+            if (err.response.status === 500) {
+              this.setState({ networkErr: true });
+            }
+          });
       }
     } else {
-       this.setState({
+      this.setState({
         dislikeCount: this.state.dislikeCount - 1,
         disliked: dislike,
       });
       authorizedRequestsHandler()
-        .patch(
-          buzzDislikeEndpoint+`/${this.props.id}?reverse=1`,
-          null
-        )
+        .patch(buzzDislikeEndpoint + `/${this.props.buzz._id}?reverse=1`, null)
         .then((res) => {
-           this.setState({updateReview:false}); 
+          this.setState({ updateReview: false });
         })
-        .catch((err) => {this.setState({updateReview:false});
-        const errorCode=err.response.data.errorCode;
-        if(errorCode==="INVALID_TOKEN"){
-           this.props.errorOccurred();
-        }
-        if(err.response.status===500){
-           this.setState({networkErr:true});
-        }});
+        .catch((err) => {
+          this.setState({ updateReview: false });
+          const errorCode = err.response.data.errorCode;
+          if (errorCode === "INVALID_TOKEN") {
+            this.props.errorOccurred();
+          }
+          if (err.response.status === 500) {
+            this.setState({ networkErr: true });
+          }
+        });
     }
   };
 
   render() {
+    // console.log(this.history.props.location);
     return (
       <div className={styles.recentBuzz}>
-         {(this.state.networkErr)?alert("Please check your internet connection"):null}
+        {this.state.networkErr
+          ? alert("Please check your internet connection")
+          : null}
         <div className={styles.buzzes}>
           <span className={styles.date}>
-            {this.props.dayFormat}/<br/>
+            {this.props.dayFormat}/<br />
             {this.props.monthFormat}
           </span>
           <span className={styles.dateMobile}>
-            {this.props.dayFormat}/{this.props.monthFormat}/{this.props.yearFormat}
+            {this.props.dayFormat}/{this.props.monthFormat}/
+            {this.props.yearFormat}
           </span>
           <div className={styles.rightDiv}>
             {this.props.images.length > 0 ? (
               <Corousel image={this.props.images} />
             ) : null}
-            <img className={styles.profilePic} src={serverURI+pictureURI+'/'+ encodeURIComponent(this.props.picture)} alt="Profile Pic"/> 
-            <span className={styles.userId}>{this.props.name}</span>
+            <img
+              className={styles.profilePic}
+              src={
+                serverURI +
+                pictureURI +
+                "/" +
+                encodeURIComponent(this.props.buzz.user.picture)
+              }
+              alt="Profile Pic"
+            />
+            <span className={styles.userId}>{this.props.buzz.user.name}</span>
             <span className={styles.duration}>
               {this.timed(this.props.duration)}
             </span>
-            <p>{this.props.description}</p>
-            <div className={styles.reviews+" "+(this.state.updateReview?styles.disableClick:null)}>
+            <p>{this.props.buzz.description}</p>
+            <div
+              className={
+                styles.reviews +
+                " " +
+                (this.state.updateReview ? styles.disableClick : null)
+              }
+            >
               <span className={styles.count}>{this.state.likeCount}</span>
               <button
                 onClick={() => this.toggleLike()}
@@ -238,10 +256,10 @@ class RecentBuzz extends Component {
   }
 }
 
-const mapDispatchToProps=(dispatch)=>{
-  return{
-    errorOccurred:()=>dispatch(errorOccurred())
-  }
-}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    errorOccurred: () => dispatch(errorOccurred()),
+  };
+};
 
-export default connect(null,mapDispatchToProps)(RecentBuzz);
+export default connect(null, mapDispatchToProps)(RecentBuzz);

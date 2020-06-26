@@ -6,6 +6,23 @@
     /* max-height:250px; */
 }
 
+.filterBar{
+    background-color: #fff;
+    border-bottom:2px solid #ccc;
+    padding:7px 50px;
+    display:flex;
+    justify-content: space-between;
+}
+
+.search{
+    width:100px;
+}
+
+.filterButtons{
+    margin:0px 15px;
+}
+
+
 .heading {
     padding: 10px 0px;
     padding-left: 20px;
