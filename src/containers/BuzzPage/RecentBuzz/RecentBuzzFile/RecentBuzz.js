@@ -7,6 +7,7 @@ import {buzzLikeEndpoint,buzzDislikeEndpoint } from "../../../../APIs/APIEndpoin
 import { errorOccurred } from "../../../../store/actions";
 import { serverURI, pictureURI } from "../../../../APIs/APIEndpoints";
 
+
 class RecentBuzz extends Component {
   state = {
     likeCount: this.props.buzz.likeCount || 0,
@@ -179,32 +180,16 @@ class RecentBuzz extends Component {
     }
   };
 
-  // deletePost=()=>{
-  //   authorizedRequestsHandler()
-  //   .delete(buzzEndpoint + `/${this.props.buzz._id}`)
-  //   .then((res) => {
-  //     console.log(res);
-  //   })
-  //   .catch((err) => {
-  //     const errorCode = err.response.data.errorCode;
-  //     if (errorCode === "INVALID_TOKEN") {
-  //       this.props.errorOccurred();
-  //     }
-  //     if (err.response.status === 500) {
-  //       this.setState({ networkErr: true });
-  //     }
-  //   });
-
-  // }
   render() {
     // console.log(this.history.props.location);
+    console.log(this.props.user);
     return (
       <div className={styles.recentBuzz}>
         {this.state.networkErr
           ? alert("Please check your internet connection")
           : null}
         <div className={styles.buzzes}>
-        <span className={styles.editButtonsDiv}>
+     {(this.props.user.email===this.props.buzz.user.email)?<span className={styles.editButtonsDiv}>
             <i
               className={
                 ["fa fa-edit",styles.editButtons].join(' ')}
@@ -215,7 +200,7 @@ class RecentBuzz extends Component {
                ["fa fa-trash",styles.editButtons].join(' ')}
                onClick={this.props.deleteClick}
             ></i>
-          </span>
+          </span>:null}
           <span className={styles.date}>
             {this.props.dayFormat}/<br />
             {this.props.monthFormat}
@@ -284,10 +269,15 @@ class RecentBuzz extends Component {
   }
 }
 
+const mapStateToProps=(state)=>{
+  return{
+    user:state.user.data
+  }
+}
 const mapDispatchToProps = (dispatch) => {
   return {
     errorOccurred: () => dispatch(errorOccurred()),
   };
 };
 
-export default connect(null, mapDispatchToProps)(RecentBuzz);
+export default connect(mapStateToProps, mapDispatchToProps)(RecentBuzz);

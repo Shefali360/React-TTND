@@ -37,6 +37,7 @@ class RecentBuzzData extends Component {
     authorizedRequestsHandler()
       .get(buzzEndpoint + `?skip=${skip}&limit=${this.limit}`)
       .then((res) => {
+        console.log(res);
         const buzz = Array.from(this.state.buzz);
         buzz.push(...res.data);
         this.setState({
@@ -72,24 +73,6 @@ class RecentBuzzData extends Component {
   handleFilterChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
-
-  deletePost=()=>{
-    authorizedRequestsHandler()
-    .delete(buzzEndpoint + `/${this.state.buzz._id}`)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      const errorCode = err.response.data.errorCode;
-      if (errorCode === "INVALID_TOKEN") {
-        this.props.errorOccurred();
-      }
-      if (err.response.status === 500) {
-        this.setState({ networkErr: true });
-      }
-    });
-
-  }
 
   applyFilters = () => {
     const filters = {};
@@ -157,8 +140,17 @@ class RecentBuzzData extends Component {
     authorizedRequestsHandler()
     .delete(buzzEndpoint + `/${id}`)
     .then((res) => {
-      console.log(res);
+      let arr=this.state.buzz;
+      for(let i in arr){
+        if(arr[i]._id===id){
+          console.log(i);
+          arr.splice(i,1);
+          break;
+        }
+      }
+      this.setState({buzz:this.state.buzz});
     })
+ 
     .catch((err) => {
       const errorCode = err.response.data.errorCode;
       if (errorCode === "INVALID_TOKEN") {

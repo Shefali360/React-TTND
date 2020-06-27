@@ -17,9 +17,6 @@ export const unliked = (err) => {
 
 export const userID = (id) => {
         return (dispatch) => {
-            // const buzzdata= {
-            //     buzz:buzz
-            // };
             console.log(buzzdata);
             authorizedRequestsHandler()
             .patch(buzzLikeEndpoint+`/${buzzdata.buzz._id}`, null)
@@ -28,13 +25,6 @@ export const userID = (id) => {
             })
             .catch((err) => {
                 dispatch(unliked());
-            // const errorCode=err.response.data.errorCode;
-            // if(errorCode==="INVALID_TOKEN"){
-            //    this.props.errorOccurred();
-            // }
-            // if(err.response.status===500){
-            //    this.setState({networkErr:true});
-            // }
           });
 };
 }
