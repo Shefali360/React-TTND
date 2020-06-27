@@ -51,6 +51,7 @@ class UserComplaintList extends Component {
           stringify(this.state.filters)
       )
       .then((res) => {
+        console.log(res);
         const complaintsList = Array.from(this.state.complaintsList);
         complaintsList.push(...res.data);
         this.setState({
@@ -198,7 +199,7 @@ class UserComplaintList extends Component {
       tableData = count.map((complaint) => {
         return (
           <tr key={complaint._id}>
-            <td>{complaint.department}</td>
+            <td>{complaint.department.department}</td>
             <td>
               <button
                 className={styles.issueId}
@@ -209,7 +210,7 @@ class UserComplaintList extends Component {
                 {complaint.issueId}
               </button>
             </td>
-            <td>{complaint.assignedTo}</td>
+            <td>{complaint.assignedTo.name}</td>
             <td className={this.statusColor(complaint.status)}>
               {complaint.status}
             </td>

@@ -12,24 +12,7 @@ class ComplaintPage extends Component{
     complaintSubmitted:{submitted:0}
   }
 
-  parseIdToken=()=>{
-    try{
-      const data=JSON.parse(atob(this.props.data.id_token.split('.')[1]));
-      this.setState({
-        userName: data.name,
-        userMail: data.email
-      });
-    }catch(err){
-      const errorCode=err.response.data.errorCode;
-      if(errorCode==="INVALID_TOKEN"){
-         this.props.errorOccurred();
-      }
-    }
-
-  }
-
   componentDidMount() {
-    this.parseIdToken();
   }
 
   complaintSubmitted=(event)=>{
@@ -40,7 +23,7 @@ class ComplaintPage extends Component{
     return (
       <div>
          
-        <Complaintbox name={this.state.userName} mail={this.state.userMail}  submitted={this.complaintSubmitted} />
+        <Complaintbox submitted={this.complaintSubmitted} />
         <ComplaintsList submitted={this.state.complaintSubmitted}/>
       </div>
     );

@@ -20,10 +20,10 @@ const ComplaintPopup=(props)=>{
          </div>
          <p className={styles.text}>Logged On:{dayFormat}/{monthFormat}/{year}</p>
         {(complaint.status==="In Progress")?<p className={styles.text}>Estimated time:{complaint.estimatedTime.count} {complaint.estimatedTime.timeType}</p>:null}
-        {(complaint.lockedBy)?<p className={styles.text}>Locked By:{complaint.lockedBy}</p>:null}
-        <p className={styles.assignedTo}>Assigned To:{complaint.assignedTo}</p>
+        {(complaint.lockedBy)?<p className={styles.text}>Locked By:{complaint.lockedBy.name}</p>:null}
+        <p className={styles.assignedTo}>Assigned To:{complaint.assignedTo.name}</p>
          <div className={styles.column2}>
-         <p className={styles.text}>Department:{complaint.department}</p>
+         <p className={styles.text}>Department:{complaint.department.department}</p>
          <p className={styles.text}>Issue Title:{complaint.issue}</p>
          </div>
          <p className={styles.text}>{complaint.concern}</p>

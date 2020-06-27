@@ -11,3 +11,4 @@ export const adminEndpoint = "/admin";
 export const signupEndpoint = "/signup";
 export const signinEndpoint = "/signin";
 export const logoutEndpoint = "/logout";
+export const departmentEndpoint="/department";
