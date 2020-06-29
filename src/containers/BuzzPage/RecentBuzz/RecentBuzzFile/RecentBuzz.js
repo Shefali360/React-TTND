@@ -182,7 +182,6 @@ class RecentBuzz extends Component {
 
   render() {
     // console.log(this.history.props.location);
-    console.log(this.props.user);
     return (
       <div className={styles.recentBuzz}>
         {this.state.networkErr
@@ -193,6 +192,7 @@ class RecentBuzz extends Component {
             <i
               className={
                 ["fa fa-edit",styles.editButtons].join(' ')}
+                onClick={this.props.editClick}
               
             ></i>
             <i

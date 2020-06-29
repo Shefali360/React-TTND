@@ -37,7 +37,6 @@ class RecentBuzzData extends Component {
     authorizedRequestsHandler()
       .get(buzzEndpoint + `?skip=${skip}&limit=${this.limit}`)
       .then((res) => {
-        console.log(res);
         const buzz = Array.from(this.state.buzz);
         buzz.push(...res.data);
         this.setState({
@@ -136,6 +135,10 @@ class RecentBuzzData extends Component {
       });
   };
 
+  // editPost=()=>{
+  //   this.props.edited({editClicked:true});
+  // }
+
   deletePost=(id)=>{
     authorizedRequestsHandler()
     .delete(buzzEndpoint + `/${id}`)
@@ -143,7 +146,6 @@ class RecentBuzzData extends Component {
       let arr=this.state.buzz;
       for(let i in arr){
         if(arr[i]._id===id){
-          console.log(i);
           arr.splice(i,1);
           break;
         }

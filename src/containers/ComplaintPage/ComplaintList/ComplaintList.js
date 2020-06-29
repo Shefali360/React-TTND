@@ -29,15 +29,8 @@ class UserComplaintList extends Component {
     networkErr: false,
   };
   limit = 10;
-  departmentArray = [
-    { value: "", name: "Department" },
-    { value: "Admin", name: "Admin" },
-    { value: "IT", name: "IT" },
-    { value: "HR", name: "HR" },
-    { value: "Infra", name: "Infra" },
-  ];
   statusArray = [
-    { value: "", name: "Status" },
+    { value: "", name: "Select Status" },
     { value: "Open", name: "Open" },
     { value: "In Progress", name: "In Progress" },
     { value: "Closed", name: "Closed" },
@@ -51,7 +44,6 @@ class UserComplaintList extends Component {
           stringify(this.state.filters)
       )
       .then((res) => {
-        console.log(res);
         const complaintsList = Array.from(this.state.complaintsList);
         complaintsList.push(...res.data);
         this.setState({
@@ -113,6 +105,7 @@ class UserComplaintList extends Component {
       filters["issueId"] = this.state.searchInput.trim().toUpperCase();
     }
     this.setState({ filters: filters, skip: 0, hasMore: false });
+    
     authorizedRequestsHandler()
       .get(
         complaintsEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filters)
@@ -124,6 +117,7 @@ class UserComplaintList extends Component {
             skip: this.limit,
             hasMore: !(res.data.length < this.limit),
           });
+         
         } else if (res.data.length === 0) {
           this.setState({ complaintsList: [] });
         }
@@ -168,6 +162,31 @@ class UserComplaintList extends Component {
         }
       });
   };
+
+  deleteComplaint=(id)=>{
+    authorizedRequestsHandler()
+    .delete(complaintsEndpoint + `/${id}`)
+    .then((res) => {
+      let arr=this.state.complaintsList;
+      for(let i in arr){
+        if(arr[i]._id===id){
+          arr.splice(i,1);
+          break;
+        }
+      }
+      this.setState({complaintsList:this.state.complaintsList});
+    })
+ 
+    .catch((err) => {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    });
+  }
 
   render() {
     let tableData = null;
@@ -214,6 +233,18 @@ class UserComplaintList extends Component {
             <td className={this.statusColor(complaint.status)}>
               {complaint.status}
             </td>
+            <td>
+              <i
+              className={
+                ["fa fa-edit",styles.edit].join(' ')}
+              
+            ></i>
+            <i
+              className={
+               ["fa fa-times",styles.delete].join(' ')}
+               onClick={()=>this.deleteComplaint(complaint._id)}
+            ></i>
+            </td>
           </tr>
         );
       });
@@ -231,7 +262,7 @@ class UserComplaintList extends Component {
               name="department"
               value={this.state.department}
               change={this.handleFilterChange}
-              array={this.departmentArray}
+              array={this.props.deptArray}
             />
           </div>
           <div className={dropdownStyles.dropdown}>
@@ -278,6 +309,7 @@ class UserComplaintList extends Component {
                 <th>Issue Id</th>
                 <th>Assigned To</th>
                 <th>Status</th>
+                <th>Edit/Delete</th>
               </tr>
             </thead>
             <InfiniteScroll

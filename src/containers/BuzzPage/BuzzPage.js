@@ -5,7 +5,8 @@ import RecentBuzz from './RecentBuzz/RecentBuzz';
 class BuzzPage extends Component{    
 
     state={
-        buzzSubmitted:{submitted:0}
+        buzzSubmitted:{submitted:0},
+        // edited:{editClicked:false}
     }
     
 
@@ -16,7 +17,9 @@ class BuzzPage extends Component{
     return(
         <div> 
             <CreateBuzz submitted={this.buzzSubmitted}/>
-            <RecentBuzz submitted={this.state.buzzSubmitted}/>
+            <RecentBuzz submitted={this.state.buzzSubmitted} 
+            // edited={this.edited}
+            />
         </div>
     );
 }

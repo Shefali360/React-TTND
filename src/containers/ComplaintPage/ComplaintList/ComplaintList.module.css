@@ -83,8 +83,23 @@ td:last-child{
     text-align: center;
     border:1px solid #ccc;
 }
+
+.complaintsList td:last-child{
+    display: flex;
+    justify-content: space-evenly;
+}
 .complaintsList th,td{
     padding:10px;
+}
+
+.edit{
+    color:blue;
+    font-weight: bold;
+}
+
+.delete{
+    color:red;
+    
 }
 
 .issueId{

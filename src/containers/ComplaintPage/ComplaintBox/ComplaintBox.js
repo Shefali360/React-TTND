@@ -3,13 +3,12 @@ import styles from "./ComplaintBox.module.css";
 import { connect } from "react-redux";
 import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
 import {authorizedRequestsHandler} from '../../../APIs/APIs';
-import {departmentEndpoint,complaintsEndpoint} from '../../../APIs/APIEndpoints';
+import {complaintsEndpoint} from '../../../APIs/APIEndpoints';
 import { errorOccurred } from "../../../store/actions";
 import Dropdown from '../../../components/Dropdown/Dropdown';
 
 class ComplaintBox extends Component{
 state = {
-    departmentArr:[],
     department: "",
     issue: "",
     concern:"",
@@ -23,23 +22,11 @@ state = {
     concernEmpty:false,
     networkErr:false,
     redirect:false,
-    deptArray:[]
   }; 
   counter=0;
   limit=5;
   issueArray=[{value:"",name:"Select Issue Title"},{value:"Hardware",name:"Hardware"},{value:"Infrastructure",name:"Infrastructure"},{value:"Others",name:"Others"}]
 
-
-  departmentArray=(department)=>{
-    let deptArray=[{value:"",name:"Select Department"}];
-     department.forEach((dept)=>{
-       deptArray.push({value:dept._id,name:dept.department});
-     })
-     return deptArray;
-   }
-  componentDidMount(){
-    this.getDepartment(this.state.skip);
-  }
   fileChange=(event)=>{
      this.setState({files:event.target.files});
   }
@@ -63,31 +50,6 @@ state = {
     );
   };
 
-  getDepartment = () => {
-    authorizedRequestsHandler()
-      .get(departmentEndpoint)
-      .then((res) => {
-        const department = Array.from(this.state.departmentArr);
-        department.push(...res.data);
-        this.setState({
-         departmentArr:department,
-          spinner: false,
-        });
-        const dept=this.departmentArray(this.state.departmentArr);
-        this.setState({deptArray:dept})
-      })
-      .catch((err) => {
-        this.setState({ error: true, spinner: false });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
-      });
-  };
-
   submitHandler = (event) => {
     event.preventDefault();
     let formData=new FormData();
@@ -95,7 +57,6 @@ state = {
         formData.append("files",this.state.files[i],this.state.files[i]["name"])
     }
     formData.append("department",this.state.department);
-    console.log(this.state.department)
     formData.append("issue",this.state.issue);
     formData.append("concern",this.state.concern);
     this.setState({spinner:true});
@@ -135,7 +96,7 @@ state = {
         <div className={[styles.item,styles.dropdownMenu].join(' ')}> 
           <label>Select Department</label>
           <Dropdown class={styles.select} name="department" change={this.handleChange}
-                array={this.state.deptArray}/>
+                array={this.props.deptArray}/>
           </div>
           <div className={[styles.item,styles.dropdownMenu].join(' ')}>
           <label>Issue Title</label>
@@ -196,6 +157,4 @@ const mapDispatchToProps=(dispatch)=>{
   }
   }
   
-
-
 export default connect(mapStateToProps,mapDispatchToProps)(ComplaintBox);
