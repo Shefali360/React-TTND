@@ -11,7 +11,7 @@ import errorStyles from '../../BuzzPage/RecentBuzz/RecentBuzzFile/RecentBuzz.mod
 import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import {authorizedRequestsHandler} from '../../../APIs/APIs';
-import {allComplaintsEndpoint} from '../../../APIs/APIEndpoints';
+import {assignedComplaintsEndpoint} from '../../../APIs/APIEndpoints';
 import {complaintsEndpoint} from '../../../APIs/APIEndpoints';
 import { errorOccurred } from "../../../store/actions";
 import Loader from '../../../components/Loader/Loader';
@@ -22,7 +22,7 @@ class AllComplaintsList extends Component {
     value: "",
     id: null,
     issueId: null,
-    allComplaintsList: [],
+    assignedComplaintsList: [],
     descriptionPopupVisible: false,
     complaint: {},
     estimatedTime: {
@@ -50,24 +50,25 @@ class AllComplaintsList extends Component {
   timeTypeArray=[{value:"hours",name:"hours"},{value:"days",name:"days"},{value:"weeks",name:"weeks"},{value:"months",name:"months"}]
 
   componentDidMount() {
-    this.getAllComplaintsList();
-    
+    this.getAssignedComplaintsList();
    }
 
-  getAllComplaintsList=()=>{
+  getAssignedComplaintsList=()=>{
    authorizedRequestsHandler()
-    .get(allComplaintsEndpoint+`?skip=${this.state.skip}&limit=${this.limit}&`+stringify(this.state.filters))
+    .get(assignedComplaintsEndpoint+`?skip=${this.state.skip}&limit=${this.limit}&`+stringify(this.state.filters))
     .then((res) => {
-      const allComplaintsList = Array.from(this.state.allComplaintsList);
-      allComplaintsList.push(...res.data);
+      console.log(res);
+      const assignedComplaintsList = Array.from(this.state.assignedComplaintsList);
+      assignedComplaintsList.push(...res.data);
       this.setState({
-      allComplaintsList:allComplaintsList,
+      assignedComplaintsList:assignedComplaintsList,
       skip:this.state.skip + 10,
       hasMore:!(res.data.length<this.limit),
       spinner:false
     })
     })
     .catch((err) => {
+      console.log(err);
       this.setState({ error: true,spinner:false });
       const errorCode=err.response.data.errorCode;
       if(errorCode==="INVALID_TOKEN"){
@@ -121,16 +122,16 @@ class AllComplaintsList extends Component {
      this.setState({filters:filters,skip:0,hasMore:false});
     
    authorizedRequestsHandler()
-      .get(allComplaintsEndpoint+`?skip=0&limit=${this.limit}&`+stringify(filters))
+      .get(assignedComplaintsEndpoint+`?skip=0&limit=${this.limit}&`+stringify(filters))
       .then((res) => {
      
         if (res.data.length !== 0) {
           this.setState({
-          allComplaintsList: res.data,
+          assignedComplaintsList: res.data,
           skip:this.limit,
           hasMore:!(res.data.length < this.limit)
         });}else if (res.data.length === 0) {
-          this.setState({ complaintsList: []})
+          this.setState({ assignedComplaintsList: []})
         }
       })
       .catch((err) => {
@@ -148,10 +149,10 @@ class AllComplaintsList extends Component {
   resetFilters=()=>{
      this.setState({filters:{},department:"",status:"",searchInput:"",search:"",hasMore:false});
    authorizedRequestsHandler()
-      .get(allComplaintsEndpoint+`?skip=0&limit=${this.limit}`)
+      .get(assignedComplaintsEndpoint+`?skip=0&limit=${this.limit}`)
       .then((res) => {
         this.setState({
-          allComplaintsList: res.data,
+          assignedComplaintsList: res.data,
           skip:this.limit,
           hasMore:!(res.data.length < this.limit)
         });
@@ -269,14 +270,14 @@ class AllComplaintsList extends Component {
           <td className={errorStyles.error}><i className="fa fa-exclamation-triangle"></i>Complaint List can't be loaded.</td>
         </tr>
       );
-    } else if(this.state.allComplaintsList.length === 0) {
+    } else if(this.state.assignedComplaintsList.length === 0) {
       tableData=(<tr><td>Table has no data.</td></tr>)
     } else {
-      let count = this.state.allComplaintsList;
+      let count = this.state.assignedComplaintsList;
       tableData = count.map((complaint) => {
         return (
           <tr key={complaint._id}>
-            <td>{complaint.department}</td>
+            <td>{complaint.department.department}</td>
             <td
               className={styles.issueId}
               onClick={() => {
@@ -288,9 +289,8 @@ class AllComplaintsList extends Component {
             >
               {complaint.issueId}
             </td>
-            <td>{complaint.lockedBy}</td>
-            <td colSpan={2}>{complaint.email}</td>
-            <td>{complaint.assignedTo}</td>
+            <td>{complaint.lockedBy.name}</td>
+            <td>{complaint.assignedTo.name}</td>
             <td>
               <div className={dropdownStyles.dropdown}>
                 <select
@@ -355,7 +355,6 @@ class AllComplaintsList extends Component {
               <th>Department</th>
               <th>Issue Id</th>
               <th>Locked By</th>
-              <th colSpan={2}>Logger Email ID</th>
               <th>Assigned To</th>
               <th>Status</th>
             </tr>
@@ -427,7 +426,6 @@ class AllComplaintsList extends Component {
     );
   }
 }
-
 
 const mapDispatchToProps=(dispatch)=>{
   return{

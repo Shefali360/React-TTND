@@ -13,7 +13,6 @@ class AuthToken extends Component {
     const validToken = this.props.data && this.props.data.access_token;
     if (validToken) {
       this.props.getUser();
-      this.props.checkAdmin();
       return <Redirect to="/buzz" />;
     } else if (this.props.tokenError) {
       let error = this.props.tokenError;
@@ -44,15 +43,13 @@ class AuthToken extends Component {
 const mapStateToProps = (state) => {
   return {
     data: state.auth.token,
-    tokenError: state.auth.tokenError,
-    admin: state.adminCheck.adminPrivilege
+    tokenError: state.auth.tokenError
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onFetchToken: () => dispatch(actions.fetchToken()),
-    checkAdmin: () => dispatch(actions.checkAdmin()),
     getUser:()=>dispatch(actions.getUserData())
   };
 };

@@ -9,7 +9,6 @@ class Login extends Component{
         localStorage.setItem("endpoint",endpoint);
     }
     render(){
-        console.log(this.props.location.state);
         let errorState=this.props.location.state;
         return(
             <div className={styles.mainImg}>

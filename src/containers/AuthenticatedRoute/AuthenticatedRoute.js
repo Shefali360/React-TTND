@@ -5,7 +5,7 @@ const AuthenticatedRoute = (props) => (
  
     <Route {...props.routeProps} render={() => (
    
-   (props.admin)? (
+   (props.user&&(props.user.role==="Admin"||props.user.role==="SuperAdmin"))? (
         <div>{props.children}</div>
         ) : (
         <Redirect to={{
@@ -19,12 +19,7 @@ const AuthenticatedRoute = (props) => (
 const mapStateToProps = (state, ownProps) => {
     
     return {
-        admin:state.adminCheck.adminPrivilege,
-        location: ownProps.path,
-        routeProps: {
-            exact: ownProps.exact,
-            path: ownProps.path
-        }
+        user:state.user.data
     };
 };
 
