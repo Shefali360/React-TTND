@@ -33,9 +33,14 @@ class RecentBuzzData extends Component {
     { value: "Lost and Found buzz", name: "Lost and Found" }
   ];
 
+  buzzEndpointToGetBuzz=(skip,filters)=>{
+   return authorizedRequestsHandler()
+    .get(
+      buzzEndpoint + `?skip=${skip}&limit=${this.limit}&`+ stringify(filters)
+    )
+  }
   getBuzz = (skip) => {
-    authorizedRequestsHandler()
-      .get(buzzEndpoint + `?skip=${skip}&limit=${this.limit}`)
+   this.buzzEndpointToGetBuzz(skip,"")
       .then((res) => {
         const buzz = Array.from(this.state.buzz);
         buzz.push(...res.data);
@@ -79,10 +84,7 @@ class RecentBuzzData extends Component {
       filters["category"] = this.state.category;
     }
     this.setState({ filters: filters, skip: 0, hasMore: false });
-    authorizedRequestsHandler()
-      .get(
-        buzzEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filters)
-      )
+    this.buzzEndpointToGetBuzz(0,filters)
       .then((res) => {
         if (res.data.length !== 0) {
           this.setState({
@@ -114,8 +116,7 @@ class RecentBuzzData extends Component {
       category: "",
       hasMore: false,
     });
-    authorizedRequestsHandler()
-      .get(buzzEndpoint + `?skip=0&limit=${this.limit}`)
+    this.buzzEndpointToGetBuzz(0,"")
       .then((res) => {
         this.setState({
           buzz: res.data,
@@ -135,9 +136,27 @@ class RecentBuzzData extends Component {
       });
   };
 
-  // editPost=()=>{
-  //   this.props.edited({editClicked:true});
-  // }
+  editPost=(id)=>{
+    const filter={};
+    if(id){
+      filter["_id"] = id;
+    }
+    this.buzzEndpointToGetBuzz(0,filter)
+    .then((res) => {
+      this.props.edited({buzzPost:res.data[0]});
+    })
+    .catch((err) => {
+      console.log(err);
+      this.setState({ error: true });
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    });
+  }
 
   deletePost=(id)=>{
     authorizedRequestsHandler()
@@ -211,6 +230,7 @@ class RecentBuzzData extends Component {
               alt={altData}
               yearFormat={year}
               deleteClick={()=>this.deletePost(buzz._id)}
+              editClick={()=>this.editPost(buzz._id)}
             />
           </li>
         );
