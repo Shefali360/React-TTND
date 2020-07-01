@@ -105,7 +105,6 @@ class UserComplaintList extends Component {
       filters["issueId"] = this.state.searchInput.trim().toUpperCase();
     }
     this.setState({ filters: filters, skip: 0, hasMore: false });
-    
     authorizedRequestsHandler()
       .get(
         complaintsEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filters)

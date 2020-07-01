@@ -17,7 +17,7 @@ class ComplaintPage extends Component {
     networkErr: false,
   };
 
-  departmentArray = (department, value) => {
+  departmentArray = (department) => {
     let deptArray = [{ value: "", name: "Select Department" }];
     department.forEach((dept) => {
       deptArray.push({ value: dept._id, name: dept.department });

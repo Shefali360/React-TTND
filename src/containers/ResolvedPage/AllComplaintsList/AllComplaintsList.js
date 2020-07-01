@@ -11,7 +11,7 @@ import errorStyles from '../../BuzzPage/RecentBuzz/RecentBuzzFile/RecentBuzz.mod
 import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import {authorizedRequestsHandler} from '../../../APIs/APIs';
-import {assignedComplaintsEndpoint} from '../../../APIs/APIEndpoints';
+import {assignedComplaintsEndpoint,departmentEndpoint} from '../../../APIs/APIEndpoints';
 import {complaintsEndpoint} from '../../../APIs/APIEndpoints';
 import { errorOccurred } from "../../../store/actions";
 import Loader from '../../../components/Loader/Loader';
@@ -41,17 +41,45 @@ class AllComplaintsList extends Component {
     spinner:true,
     requesting:false,
     countEmpty:false,
-    networkErr:false
+    networkErr:false,
+    deptArray:[]
   };
   limit=10;
-  departmentArray=[{value:"",name:"Department"},{value:"Admin",name:"Admin"},{value:"IT",name:"IT"},{value:"HR",name:"HR"},{value:"Infra",name:"Infra"}];
-  statusArray=[{value:"",name:"Status"},{value:"Open",name:"Open"},{value:"In Progress",name:"In Progress"},{value:"Closed",name:"Closed"}];
+  statusArray=[{value:"",name:"Select Status"},{value:"Open",name:"Open"},{value:"In Progress",name:"In Progress"},{value:"Closed",name:"Closed"}];
   searchArray=[{value:"",name:"Search By"},{value:"issueId",name:"Issue id"},{value:"lockedBy",name:"Locked By"}];
   timeTypeArray=[{value:"hours",name:"hours"},{value:"days",name:"days"},{value:"weeks",name:"weeks"},{value:"months",name:"months"}]
 
   componentDidMount() {
     this.getAssignedComplaintsList();
+    this.getDepartment();
    }
+
+   departmentArray = (department) => {
+    let deptArray = [{ value: "", name: "Select Department" }];
+    department.forEach((dept) => {
+      deptArray.push({ value: dept._id, name: dept.department });
+    });
+    return deptArray;
+  };
+
+  getDepartment = () => {
+    authorizedRequestsHandler()
+      .get(departmentEndpoint)
+      .then((res) => {
+        const dept = this.departmentArray(res.data);
+        this.setState({ deptArray: dept, spinner: false });
+      })
+      .catch((err) => {
+        this.setState({ error: true, spinner: false });
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
+      });
+  };
 
   getAssignedComplaintsList=()=>{
    authorizedRequestsHandler()
@@ -109,7 +137,6 @@ class AllComplaintsList extends Component {
 
   applyFilters=()=>{
     const filters={};
-  
     if(this.state.department){
       filters["department"]=this.state.department;
     }
@@ -124,13 +151,13 @@ class AllComplaintsList extends Component {
    authorizedRequestsHandler()
       .get(assignedComplaintsEndpoint+`?skip=0&limit=${this.limit}&`+stringify(filters))
       .then((res) => {
-     
         if (res.data.length !== 0) {
           this.setState({
           assignedComplaintsList: res.data,
           skip:this.limit,
           hasMore:!(res.data.length < this.limit)
-        });}else if (res.data.length === 0) {
+        });
+      }else if (res.data.length === 0) {
           this.setState({ assignedComplaintsList: []})
         }
       })
@@ -326,7 +353,7 @@ class AllComplaintsList extends Component {
        
           <div className={dropdownStyles.dropdown}>
           <Dropdown name="department" value={this.state.department} change={this.handleFilterChange}
-                array={this.departmentArray}/>
+                array={this.state.deptArray}/>
           </div>
           <div className={dropdownStyles.dropdown}>
           <Dropdown name="status" value={this.state.status} change={this.handleFilterChange}
