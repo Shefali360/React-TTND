@@ -4,7 +4,7 @@ import sharedStyles from "../../../components/Dropdown/Dropdown.module.css";
 import { connect } from "react-redux";
 import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
-import { buzzEndpoint,buzzUpdateEndpoint } from "../../../APIs/APIEndpoints";
+import { buzzEndpoint } from "../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../store/actions";
 import Dropdown from "../../../components/Dropdown/Dropdown";
 
@@ -29,17 +29,6 @@ class CreateBuzz extends Component {
   ];
 
   counter = 0;
-
-  componentDidUpdate(prevProps) {
-    if (this.props.edited.buzzPost !== prevProps.edited.buzzPost) {
-      console.log(this.props.edited.buzzPost);
-      this.setState({
-        description: this.props.edited.buzzPost.description,
-        category: this.props.edited.buzzPost.category,
-        images:this.props.edited.buzzPost.images
-      });
-    }
-  }
 
   fileChange = (event) => {
     this.setState({ images: event.target.files });
@@ -67,47 +56,6 @@ class CreateBuzz extends Component {
       }
     );
   };
-
-  editSubmitHandler=(event,id)=>{
-    event.preventDefault();
-    let formData = new FormData();
-    for (let i = 0; i < this.state.images.length; i++) {
-      formData.append(
-        "images",
-        this.state.images[i],
-        this.state.images[i]["name"]
-      );
-    }
-    formData.append("description", this.state.description);
-    formData.append("category", this.state.category);
-    this.setState({ spinner: true });
-    authorizedRequestsHandler()
-    .patch(buzzUpdateEndpoint+`/${id}`,formData)
-    .then((res) => {
-      this.props.submitted({ submitted: ++this.counter });
-      this.setState({
-        description: "",
-        category: "",
-        formSubmitted: true,
-        submitDisabled: true,
-        images: [],
-        spinner: false,
-      });
-      setTimeout(() => {
-        this.setState({ formSubmitted: false });
-      }, 1000);
-    })
-    .catch((err) => {
-      this.setState({ spinner: false });
-      const errorCode = err.response.data.errorCode;
-      if (errorCode === "INVALID_TOKEN") {
-        this.props.errorOccurred();
-      }
-      if (err.response.status === 500) {
-        this.setState({ networkErr: true });
-      }
-    });
-  }
 
   submitHandler = (event) => {
     event.preventDefault();

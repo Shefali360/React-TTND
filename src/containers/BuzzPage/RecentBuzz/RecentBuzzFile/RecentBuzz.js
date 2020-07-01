@@ -10,8 +10,8 @@ import { serverURI, pictureURI } from "../../../../APIs/APIEndpoints";
 
 class RecentBuzz extends Component {
   state = {
-    likeCount: this.props.buzz.likeCount || 0,
-    dislikeCount: this.props.buzz.dislikeCount || 0,
+    likeCount: this.props.buzz.likes|| 0,
+    dislikeCount: this.props.buzz.dislikes || 0,
     liked: this.props.buzz.liked || false,
     disliked: this.props.buzz.disliked || false,
     updateReview: false,
@@ -181,7 +181,6 @@ class RecentBuzz extends Component {
   };
 
   render() {
-    // console.log(this.history.props.location);
     return (
       <div className={styles.recentBuzz}>
         {this.state.networkErr

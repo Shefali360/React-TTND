@@ -24,6 +24,7 @@
     margin:0px 10px;
     color:gray;
     font-weight: bold;
+    cursor: pointer;
 }
 .buzzes .dateMobile{
     display:none;

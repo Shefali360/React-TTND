@@ -6,15 +6,17 @@ import RecentBuzz from "./RecentBuzzFile/RecentBuzz";
 import styles from "./RecentBuzz.module.css";
 import InfiniteScroll from "react-infinite-scroller";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
-import { buzzEndpoint } from "../../../APIs/APIEndpoints";
+import { buzzEndpoint,buzzUpdateEndpoint } from "../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../store/actions";
 import Dropdown from "../../../components/Dropdown/Dropdown";
 import dropdownStyles from "../../../components/Dropdown/Dropdown.module.css";
 import sharedStyles from "../../../containers/ResolvedPage/AllComplaintsList/AllComplaintsList.module.css";
 import { stringify } from "query-string";
+import EditBuzzPopup from '../../../components/EditBuzzPopup/EditBuzzPopup';
 
 class RecentBuzzData extends Component {
   state = {
+    id:null,
     buzz: [],
     error: false,
     skip: 0,
@@ -22,8 +24,14 @@ class RecentBuzzData extends Component {
     spinner: true,
     networkErr: false,
     category:'',
-    filters:{}
-
+    filters:{},
+    description:'',
+    buzzCategory:'',
+    images:[],
+    descEmpty:false,
+    categoryEmpty:false,
+    submitDisabled: true,
+    editClicked:false
   };
 
   limit = 5;
@@ -40,7 +48,7 @@ class RecentBuzzData extends Component {
     )
   }
   getBuzz = (skip) => {
-   this.buzzEndpointToGetBuzz(skip,"")
+   this.buzzEndpointToGetBuzz(skip,this.state.filters)
       .then((res) => {
         const buzz = Array.from(this.state.buzz);
         buzz.push(...res.data);
@@ -108,7 +116,6 @@ class RecentBuzzData extends Component {
       });
   };
 
-
   resetFilters = () => {
     this.setState({
       filters: {},
@@ -136,6 +143,82 @@ class RecentBuzzData extends Component {
       });
   };
 
+  fileChange = (event) => {
+    this.setState({ images: event.target.files });
+  };
+
+  handleChange = (event) => {
+    this.setState(
+      {
+        [event.target.name]: event.target.value,
+      },
+      () => {
+        if (this.state.description !== "" && this.state.buzzCategory !== "") {
+          this.setState({
+            submitDisabled: false,
+            descEmpty: false,
+            categoryEmpty: false,
+          });
+        }
+        if (this.state.description === "") {
+          this.setState({ descEmpty: true });
+        }
+        if (this.state.buzzCategory === "") {
+          this.setState({ categoryEmpty: true });
+        }
+      }
+    );
+  };
+
+  submitHandler = (event) => {
+    event.preventDefault();
+    let formData = new FormData();
+    if(this.state.images.length>0){
+    for (let i = 0; i < this.state.images.length; i++) {
+      formData.append(
+        "images",
+        this.state.images[i],
+        this.state.images[i]["name"]
+      );
+    }
+  }
+    formData.append("description", this.state.description);
+    formData.append("category", this.state.buzzCategory);
+    this.setState({ spinner: true});
+    authorizedRequestsHandler()
+      .patch(buzzUpdateEndpoint+`/${this.state.id}`,formData)
+      .then((res) => {
+        const array=this.state.buzz;
+        const index=array.findIndex(ele=>ele._id===this.state.id);
+        array[index].description=res.data.description;
+        array[index].category=res.data.category;
+        if(res.data.images.length>0){array[index].images=res.data.images;}
+        this.setState({
+          buzz:array,
+          description: "",
+          buzzCategory: "",
+          formSubmitted: true,
+          submitDisabled: true,
+          spinner: false,
+          editClicked:false
+        });
+        setTimeout(() => {
+          this.setState({ formSubmitted: false });
+        }, 1000);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ spinner: false });
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
+      });
+  };
+
   editPost=(id)=>{
     const filter={};
     if(id){
@@ -143,7 +226,12 @@ class RecentBuzzData extends Component {
     }
     this.buzzEndpointToGetBuzz(0,filter)
     .then((res) => {
-      this.props.edited({buzzPost:res.data[0]});
+      this.setState({
+        id:res.data[0]._id,
+        buzzCategory:res.data[0].category,
+        description:res.data[0].description,
+        editClicked:true
+      })
     })
     .catch((err) => {
       console.log(err);
@@ -156,6 +244,10 @@ class RecentBuzzData extends Component {
         this.setState({ networkErr: true });
       }
     });
+  }
+
+  closePopup=()=>{
+    this.setState({singleBuzz:{},editClicked:false});
   }
 
   deletePost=(id)=>{
@@ -200,8 +292,8 @@ class RecentBuzzData extends Component {
         <p>No buzz going around.You need to post something to create one!</p>
       );
     } else {
-      let count = this.state.buzz;
-      buzzData = count.map((buzz) => {
+      let buzz = this.state.buzz;
+      buzzData = buzz.map((buzz) => {
         const todayDate = new Date();
         const time = todayDate.getTime();
         let dur = time - buzz.createdOn;
@@ -213,10 +305,10 @@ class RecentBuzzData extends Component {
         const year = date.getFullYear();
         let imageData = [];
         let altData = null;
-        if (buzz.images.length !== 0) {
+        if (buzz.images&&buzz.images.length !== 0) {
           imageData = buzz.images;
         }
-        if (buzz.images.length !== 0) {
+        if (buzz.images&&buzz.images.length !== 0) {
           altData = buzz.images;
         }
         return (
@@ -283,9 +375,21 @@ class RecentBuzzData extends Component {
             useWindow={false}
             initialLoad={false}
           >
-            {buzzData}
+            {buzzData||[]}
           </InfiniteScroll>
         </ul>
+        {this.state.editClicked ? (
+          <EditBuzzPopup 
+          description={this.state.description}
+          category={this.state.buzzCategory}
+          images={this.state.images}
+          change={this.handleChange}
+          fileChange={this.fileChange}
+          closePopup={this.closePopup}
+          clicked={(event) => {
+            this.submitHandler(event)}}
+          />
+        ) : null}
       </div>
     );
   }
