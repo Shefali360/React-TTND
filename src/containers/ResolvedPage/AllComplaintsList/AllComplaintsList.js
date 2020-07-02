@@ -387,7 +387,7 @@ class AllComplaintsList extends Component {
             </tr>
           </thead>
           <InfiniteScroll
-              loadMore={()=>this.getAllComplaintsList()}
+              loadMore={()=>this.getAssignedComplaintsList()}
               hasMore={this.state.hasMore}
               loader={<tr key={1}><td colSpan={4}><Loader/></td></tr>}
               threshold={0.8}
