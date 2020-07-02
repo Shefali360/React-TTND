@@ -10,9 +10,10 @@ import InfiniteScroll from "react-infinite-scroller";
 import errorStyles from "../../BuzzPage/RecentBuzz/RecentBuzzFile/RecentBuzz";
 import Dropdown from "../../../components/Dropdown/Dropdown";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
-import { complaintsEndpoint } from "../../../APIs/APIEndpoints";
+import { complaintsEndpoint, userEndpoint,departmentEndpoint } from "../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../store/actions";
 import Loader from "../../../components/Loader/Loader";
+import EditComplaintPopup from "../../../components/EditComplaintPopup/EditComplaintPopup";
 
 class UserComplaintList extends Component {
   state = {
@@ -21,12 +22,25 @@ class UserComplaintList extends Component {
     department: "",
     status: "",
     searchInput: "",
+    editedDept: "",
+    initialDept: "",
+    deptdata:{},
+    title: "",
+    concern: "",
+    files: [],
+    id: null,
+    editClicked: false,
     filters: {},
     complaintsList: [],
     error: false,
     skip: 0,
     spinner: true,
     networkErr: false,
+    submitDisabled: true,
+    departmentEmpty: false,
+    issueEmpty: false,
+    concernEmpty: false,
+    userData: {},
   };
   limit = 10;
   statusArray = [
@@ -116,7 +130,6 @@ class UserComplaintList extends Component {
             skip: this.limit,
             hasMore: !(res.data.length < this.limit),
           });
-         
         } else if (res.data.length === 0) {
           this.setState({ complaintsList: [] });
         }
@@ -161,31 +174,166 @@ class UserComplaintList extends Component {
         }
       });
   };
+  closeFormPopup = () => {
+    this.setState({ editClicked: false });
+  };
 
-  deleteComplaint=(id)=>{
-    authorizedRequestsHandler()
-    .delete(complaintsEndpoint + `/${id}`)
-    .then((res) => {
-      let arr=this.state.complaintsList;
-      for(let i in arr){
-        if(arr[i]._id===id){
-          arr.splice(i,1);
-          break;
+  handleChange = (event) => {
+    this.setState(
+      {
+        [event.target.name]: event.target.value,
+      },
+      () => {
+        if (
+          this.state.editedDept !== "" &&
+          this.state.title !== "" &&
+          this.state.concern !== ""
+        )
+          this.setState({
+            submitDisabled: false,
+            departmentEmpty: false,
+            issueEmpty: false,
+            concernEmpty: false,
+          });
+        if (this.state.editedDept === "") {
+          this.setState({ departmentEmpty: true });
+        }
+        if (this.state.title === "") {
+          this.setState({ issueEmpty: true });
+        }
+        if (this.state.concern === "") {
+          this.setState({ concernEmpty: true });
         }
       }
-      this.setState({complaintsList:this.state.complaintsList});
-    })
- 
-    .catch((err) => {
-      const errorCode = err.response.data.errorCode;
-      if (errorCode === "INVALID_TOKEN") {
-        this.props.errorOccurred();
-      }
-      if (err.response.status === 500) {
-        this.setState({ networkErr: true });
-      }
-    });
-  }
+    );
+  };
+
+  submitHandler = (event) => {
+    event.preventDefault();
+    let formData = new FormData();
+    // for(let i=0;i<this.state.files.length;i++){
+    //     formData.append("files",this.state.files[i],this.state.files[i]["name"])
+    // }
+    if (this.state.editedDept !== this.state.initialDept) {
+      formData.append("department", this.state.editedDept);
+    }
+    formData.append("issue", this.state.title);
+    formData.append("concern", this.state.concern);
+    this.setState({ spinner: true });
+    authorizedRequestsHandler()
+      .patch(complaintsEndpoint + `/${this.state.id}`, formData)
+      .then(async (res) => {
+        const array = this.state.complaintsList;
+        const index = array.findIndex((ele) => ele._id === this.state.id);
+        if (this.state.initialDept !== this.state.editedDept) {
+          const user = {};
+          const dept={};
+          dept["_id"]=res.data.department;
+          user["email"] = res.data.assignedTo;
+          await authorizedRequestsHandler()
+          .get(departmentEndpoint+`?skip=0&limit=1&`+stringify(dept))
+          .then((res) => {
+            const deptData = res.data[0];
+            this.setState({
+              deptData: deptData,
+            });
+          })
+          .catch((err) => console.log(err));
+          await authorizedRequestsHandler()
+            .get(userEndpoint + `?skip=0&limit=1&` + stringify(user))
+            .then((res) => {
+              const userData = res.data[0];
+              this.setState({
+                userData: { name: userData.name, email: userData.email },
+              });
+            })
+            .catch((err) => console.log(err));
+          array[index].assignedTo = this.state.userData;
+          array[index].department = this.state.deptData;
+        }
+        array[index].issue = res.data.issue;
+        array[index].concern = res.data.concern;
+        // if(res.data.images.length>0){array[index].images=res.data.images;}
+        this.setState({
+          editedDept: "",
+          title: "",
+          formSubmitted: true,
+          submitDisabled: true,
+          concern: "",
+          files: [],
+          spinner: false,
+          editClicked:false
+        });
+        this.handle = setTimeout(() => {
+          this.setState({ formSubmitted: false });
+        }, 1000);
+      })
+      .catch((err) => {
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
+      });
+  };
+
+  editComplaint = (id) => {
+    const filter = {};
+    if (id) {
+      filter["_id"] = id;
+    }
+    authorizedRequestsHandler()
+      .get(
+        complaintsEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filter)
+      )
+      .then((res) => {
+        this.setState({
+          id: res.data[0]._id,
+          initialDept: res.data[0].department._id,
+          editedDept: res.data[0].department._id,
+          title: res.data[0].issue,
+          concern: res.data[0].concern,
+          editClicked: true,
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: true });
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
+      });
+  };
+
+  deleteComplaint = (id) => {
+    authorizedRequestsHandler()
+      .delete(complaintsEndpoint + `/${id}`)
+      .then((res) => {
+        let arr = this.state.complaintsList;
+        for (let i in arr) {
+          if (arr[i]._id === id) {
+            arr.splice(i, 1);
+            break;
+          }
+        }
+        this.setState({ complaintsList: this.state.complaintsList });
+      })
+
+      .catch((err) => {
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
+      });
+  };
 
   render() {
     let tableData = null;
@@ -234,15 +382,13 @@ class UserComplaintList extends Component {
             </td>
             <td>
               <i
-              className={
-                ["fa fa-edit",styles.edit].join(' ')}
-              
-            ></i>
-            <i
-              className={
-               ["fa fa-times",styles.delete].join(' ')}
-               onClick={()=>this.deleteComplaint(complaint._id)}
-            ></i>
+                className={["fa fa-edit", styles.edit].join(" ")}
+                onClick={() => this.editComplaint(complaint._id)}
+              ></i>
+              <i
+                className={["fa fa-times", styles.delete].join(" ")}
+                onClick={() => this.deleteComplaint(complaint._id)}
+              ></i>
             </td>
           </tr>
         );
@@ -334,6 +480,20 @@ class UserComplaintList extends Component {
           <ComplaintPopup
             complaint={this.state.complaint}
             click={this.closePopup}
+          />
+        ) : null}
+        {this.state.editClicked ? (
+          <EditComplaintPopup
+            dept={this.state.editedDept}
+            issue={this.state.title}
+            concern={this.state.concern}
+            handleChange={this.handleChange}
+            deptArray={this.props.deptArray}
+            // fileChange={this.fileChange}
+            closePopup={this.closeFormPopup}
+            clicked={(event) => {
+              this.submitHandler(event);
+            }}
           />
         ) : null}
       </div>
