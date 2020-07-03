@@ -13,6 +13,7 @@ import PrivateRoute from './containers/PrivateRoute/PrivateRoute';
 import AuthenticatedRoute from './containers/AuthenticatedRoute/AuthenticatedRoute';
 import NotFound from './components/NotFound/NotFound';
 import Error from './hoc/Error/Error';
+import SuperAdmin from './containers/SuperAdmin/SuperAdmin';
 
 const App=()=>{
   return (
@@ -29,6 +30,7 @@ const App=()=>{
         <PrivateRoute exact path="/buzz"><BuzzPage/></PrivateRoute>
         <PrivateRoute exact path="/complaint"><ComplaintPage/></PrivateRoute>
         <AuthenticatedRoute exact path="/resolved"><ResolvedPage/></AuthenticatedRoute>
+        <AuthenticatedRoute exact path="/superadmin"><SuperAdmin/></AuthenticatedRoute>
         <Route exact path="/about" component={About}/>
         <Route exact path="/help" component={Help}/>
         <Route path="" component={NotFound}/>

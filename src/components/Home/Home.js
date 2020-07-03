@@ -36,6 +36,8 @@ class Home extends Component {
       text="Creating buzz around you has never been so easy...";
     }else if(this.props.history.location.pathname==="/complaint"||this.props.history.location.pathname==="/resolved"){
       text="You can now log complaints on a single click...";
+    }else if(this.props.history.location.pathname==="/superadmin"){
+      text="You can view all complaints, modify departments and users...";
     }else if(this.props.history.location.pathname==="/about"){
       text="About Us...";
     }else if(this.props.history.location.pathname==="/help"){
