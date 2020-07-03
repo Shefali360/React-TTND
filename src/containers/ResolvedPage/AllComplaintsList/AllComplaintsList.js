@@ -33,7 +33,6 @@ class AllComplaintsList extends Component {
     complaintStatus:'',
     department:'',
     status:'',
-    search:'',
     searchInput:'',
     filters:{},
     submitDisabled: true,
@@ -143,8 +142,8 @@ class AllComplaintsList extends Component {
     if(this.state.status){
       filters["status"]=this.state.status;
     }
-    if(this.state.search){
-      this.state.search==="issueId"?filters[this.state.search]=this.state.searchInput.trim().toUpperCase():filters[this.state.search]=this.state.searchInput.trim();
+    if(this.state.searchInput){
+    filters["issueId"]=this.state.searchInput.trim().toUpperCase();
     }
      this.setState({filters:filters,skip:0,hasMore:false});
     
@@ -196,7 +195,6 @@ class AllComplaintsList extends Component {
       });
   }
   submitHandler = (event) => {
-    console.log(this.state.complaintStatus);
     event.preventDefault();
     const formData = {
       estimatedTime: {
@@ -205,7 +203,6 @@ class AllComplaintsList extends Component {
       },
       status: this.state.complaintStatus,
     };
-    console.log(formData);
      this.setState({requesting:true});
    authorizedRequestsHandler()
       .patch(resolveComplaintsEndpoint+`/${this.state.id}`, formData)
@@ -288,7 +285,6 @@ class AllComplaintsList extends Component {
      this.setState({popupVisible:false});
   }
   render() {
-    console.log(this.state.assignedComplaintsList);
     let tableData = null;
     if(this.state.spinner){
       tableData= 
@@ -354,7 +350,7 @@ class AllComplaintsList extends Component {
     return (
       <div id="card" className={sharedStyles.complaintsList}>
           {(this.state.networkErr)?alert("Please check your internet connection"):null}
-        <h4>All Complaints</h4>
+        <h4>Assigned Complaints</h4>
         <div className={styles.filterFields}>
        
           <div className={dropdownStyles.dropdown}>
@@ -367,13 +363,8 @@ class AllComplaintsList extends Component {
           </div>
           <div>
           <div className={styles.search}>
-            <input type="search" placeholder="Search" name="searchInput" value={this.state.searchInput} onChange={this.handleFilterChange}/>
-            <div className={dropdownStyles.dropdown}>
-            <Dropdown name="search" value={this.state.search} change={this.handleFilterChange}
-                array={this.searchArray}/>
-            </div>
+            <input type="text" placeholder="Enter Issue ID" name="searchInput" value={this.state.searchInput} onChange={this.handleFilterChange}/>
           </div>
-          {(this.state.searchInput!==""&&this.state.search===""?<p className={styles.message}>Please select a field to search by.</p>:null)}
           </div>
           <i className={["fa fa-check",styles.check].join(' ')}onClick={this.applyFilters} title="Apply Filters"></i>
           <i className={["fa fa-undo",styles.undo].join(' ')}  onClick={this.resetFilters} title="Reset Filters"></i>
