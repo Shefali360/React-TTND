@@ -51,6 +51,7 @@ class UserComplaintList extends Component {
   ];
 
   getComplaints = (skip) => {
+    
     authorizedRequestsHandler()
       .get(
         complaintsEndpoint +
@@ -208,12 +209,18 @@ class UserComplaintList extends Component {
     );
   };
 
+  fileChange = (event) => {
+    this.setState({ files: event.target.files });
+  };
+
   submitHandler = (event) => {
     event.preventDefault();
     let formData = new FormData();
-    // for(let i=0;i<this.state.files.length;i++){
-    //     formData.append("files",this.state.files[i],this.state.files[i]["name"])
-    // }
+    if(this.state.files.length>0){
+    for(let i=0;i<this.state.files.length;i++){
+        formData.append("files",this.state.files[i],this.state.files[i]["name"])
+    }
+  }
     if (this.state.editedDept !== this.state.initialDept) {
       formData.append("department", this.state.editedDept);
     }
@@ -253,7 +260,8 @@ class UserComplaintList extends Component {
         }
         array[index].issue = res.data.issue;
         array[index].concern = res.data.concern;
-        // if(res.data.images.length>0){array[index].images=res.data.images;}
+        if(res.data.files.length>0){array[index].files=res.data.files;
+        }
         this.setState({
           editedDept: "",
           title: "",
@@ -489,7 +497,7 @@ class UserComplaintList extends Component {
             concern={this.state.concern}
             handleChange={this.handleChange}
             deptArray={this.props.deptArray}
-            // fileChange={this.fileChange}
+            fileChange={this.fileChange}
             closePopup={this.closeFormPopup}
             clicked={(event) => {
               this.submitHandler(event);
