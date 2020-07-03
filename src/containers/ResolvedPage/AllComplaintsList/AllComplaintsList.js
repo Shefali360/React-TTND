@@ -12,7 +12,7 @@ import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import {authorizedRequestsHandler} from '../../../APIs/APIs';
 import {assignedComplaintsEndpoint,departmentEndpoint} from '../../../APIs/APIEndpoints';
-import {complaintsEndpoint} from '../../../APIs/APIEndpoints';
+import {resolveComplaintsEndpoint} from '../../../APIs/APIEndpoints';
 import { errorOccurred } from "../../../store/actions";
 import Loader from '../../../components/Loader/Loader';
 
@@ -28,8 +28,9 @@ class AllComplaintsList extends Component {
     estimatedTime: {
       count: 0,
       timeType: "hours",
-      status: "",
+      // status: "",
     },
+    complaintStatus:'',
     department:'',
     status:'',
     search:'',
@@ -85,7 +86,6 @@ class AllComplaintsList extends Component {
    authorizedRequestsHandler()
     .get(assignedComplaintsEndpoint+`?skip=${this.state.skip}&limit=${this.limit}&`+stringify(this.state.filters))
     .then((res) => {
-      console.log(res);
       const assignedComplaintsList = Array.from(this.state.assignedComplaintsList);
       assignedComplaintsList.push(...res.data);
       this.setState({
@@ -196,18 +196,24 @@ class AllComplaintsList extends Component {
       });
   }
   submitHandler = (event) => {
+    console.log(this.state.complaintStatus);
     event.preventDefault();
     const formData = {
       estimatedTime: {
         count: this.state.estimatedTime.count,
         timeType: this.state.estimatedTime.timeType,
       },
-      status: this.state.value,
+      status: this.state.complaintStatus,
     };
+    console.log(formData);
      this.setState({requesting:true});
    authorizedRequestsHandler()
-      .patch(complaintsEndpoint+`/${this.state.id}`, formData)
+      .patch(resolveComplaintsEndpoint+`/${this.state.id}`, formData)
       .then((res) => {
+        const array = this.state.assignedComplaintsList;
+        const index = array.findIndex((ele) => ele._id === this.state.id);
+        array[index].status=res.data.status;
+        array[index].estimatedTime=res.data.estimatedTime;
         this.setState({
           formSubmitted: true,
           popupVisible:false,
@@ -237,6 +243,7 @@ class AllComplaintsList extends Component {
   openPopupOnDropdownClick = (event, id, issueId) => {
     if (event.target.value=== "In Progress") {
       this.setState({
+        complaintStatus:event.target.value,
         popupVisible: true,
         id: id,
         issueId: issueId,
@@ -245,17 +252,16 @@ class AllComplaintsList extends Component {
   };
   
   handleChange = (event,id) => {
-    if (event.target.value === "In Progress") {
-       this.setState({ value: event.target.value });
-    } else 
-     {
+    if (event.target.value !== "In Progress") {
      authorizedRequestsHandler()
         .patch(
-          complaintsEndpoint+`/${id}`,
+          resolveComplaintsEndpoint+`/${id}`,
           { status: event.target.value }
         )
         .then((res) => {
-         
+          const array = this.state.assignedComplaintsList;
+          const index = array.findIndex((ele) => ele._id === id);
+          array[index].status=res.data.status;
         })
         .catch((err) => {
           const errorCode=err.response.data.errorCode;
@@ -266,8 +272,8 @@ class AllComplaintsList extends Component {
             this.setState({networkErr:true});
           }
         });
-    }
   };
+}
 
   statusColor=(status)=>{
     switch (status) {
@@ -282,6 +288,7 @@ class AllComplaintsList extends Component {
      this.setState({popupVisible:false});
   }
   render() {
+    console.log(this.state.assignedComplaintsList);
     let tableData = null;
     if(this.state.spinner){
       tableData= 
@@ -322,9 +329,8 @@ class AllComplaintsList extends Component {
               <div className={dropdownStyles.dropdown}>
                 <select
                   defaultValue={complaint.status}
-                  ref={this.statusColor}
                   className={this.statusColor(complaint.status)}
-                  name="status"
+                  name="complaintStatus"
                   onChange={(event)=>this.handleChange(event,complaint._id)}
                   onClick={(event) =>
                     this.openPopupOnDropdownClick(
@@ -422,14 +428,14 @@ class AllComplaintsList extends Component {
           <form className={styles.popupForm}>
             <div className={styles.formdata}>
               <input
-                type="text"
+                type="number"
                 placeholder="Count"
                 name="count"
                 value={this.state.estimatedTime.count}
                 onChange={this.handleEstimatedTimeChange}
               />
               <div className={[dropdownStyles.dropdown,styles.dropdown].join(' ')}>
-              <Dropdown class={styles.select} name="timeType" value={this.state.estimatedTime.count} change={this.handleEstimatedTimeChange}
+              <Dropdown class={styles.select} name="timeType" value={this.state.estimatedTime.timeType} change={this.handleEstimatedTimeChange}
                 array={this.timeTypeArray}/>
               </div>
             </div>
