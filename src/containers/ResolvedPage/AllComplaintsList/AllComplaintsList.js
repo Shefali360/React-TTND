@@ -15,6 +15,7 @@ import {assignedComplaintsEndpoint,departmentEndpoint} from '../../../APIs/APIEn
 import {resolveComplaintsEndpoint} from '../../../APIs/APIEndpoints';
 import { errorOccurred } from "../../../store/actions";
 import Loader from '../../../components/Loader/Loader';
+import popupStyles from "../../../components/EditBuzzPopup/EditBuzzPopup.module.css";
 
 class AllComplaintsList extends Component {
   state = {
@@ -237,6 +238,12 @@ class AllComplaintsList extends Component {
       descriptionPopupVisible: false,
     });
   };
+
+  closePopup=()=>{
+    this.setState({
+      popupVisible:false
+    })
+  }
   openPopupOnDropdownClick = (event, id, issueId) => {
     if (event.target.value=== "In Progress") {
       this.setState({
@@ -320,7 +327,6 @@ class AllComplaintsList extends Component {
               {complaint.issueId}
             </td>
             <td>{complaint.lockedBy.name}</td>
-            <td>{complaint.assignedTo.name}</td>
             <td>
               <div className={dropdownStyles.dropdown}>
                 <select
@@ -379,7 +385,6 @@ class AllComplaintsList extends Component {
               <th>Department</th>
               <th>Issue Id</th>
               <th>Locked By</th>
-              <th>Assigned To</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -410,12 +415,12 @@ class AllComplaintsList extends Component {
             (this.state.popupVisible ? "null" : styles.display)
           }
         >
+      <i className={["fa fa-times",popupStyles.cross].join(' ')} onClick={this.closePopup}/>
         
             <h5>
               Estimated Time
             </h5>
           <p className={styles.popupIssueId}>{this.state.issueId}</p>
-  
           <form className={styles.popupForm}>
             <div className={styles.formdata}>
               <input
