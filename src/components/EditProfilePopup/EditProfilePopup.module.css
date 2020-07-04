@@ -1,0 +1,63 @@
+.popup{
+    min-height:50%;
+    /* height:150px; */
+    background-color: #fff;
+    text-align: center;
+    border:1px solid #D8763A;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    border-radius: 4px;
+    box-shadow:0 0 10px #fff;
+    z-index:2;
+}
+
+.popup h4{
+    color:#D8763A;
+    text-align: left;
+}
+
+.cross{
+    position: absolute;
+    right:0;
+    margin-right:10px;
+    margin-top:5px;
+    color:red;
+}
+.overlay {
+    position:absolute;
+    width: 100%;
+    height: 100%; 
+    background-color: rgba(0,0,0,0.4);  
+    top:0;
+    z-index:2;
+  }
+
+  .form{
+      text-align: left;
+  }
+
+  .form label{
+    margin-left:10px;
+    font-size: 13px;
+  }
+  .form input{
+      width:90%;
+      height:22px;
+      border-radius: 3px;
+      margin:5px ;
+      margin-left:10px;
+      border:1px solid #D8763A;
+      outline: 0;
+      padding-left:10px;
+  }
+
+  .form button{
+   
+      padding:5px 15px;
+      border-radius: 3px;
+      background-color:#D8763A;
+      color:#fff;
+      font-weight: bold;
+  }

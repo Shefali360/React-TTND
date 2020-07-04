@@ -8,10 +8,12 @@ const Navbar=(props)=>{
     return (
         <div className={styles.sidebar}>
         <ul className={styles.list}>
+            <NavbarItem link="/profile">MY PROFILE</NavbarItem>
             <NavbarItem link="/buzz" >BUZZ</NavbarItem>
             <NavbarItem link="/complaint">COMPLAINTS</NavbarItem>
             {(props.user&&(props.user.role==="Admin"||props.user.role==="SuperAdmin"))?<NavbarItem link="/resolved">RESOLVED</NavbarItem>:null}
             {(props.user&&(props.user.role==="SuperAdmin"))?<NavbarItem link="/superadmin">SUPERADMIN</NavbarItem>:null}
+            
         </ul>
         <Footer/>
         </div>

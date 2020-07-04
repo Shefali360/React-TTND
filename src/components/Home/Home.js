@@ -32,7 +32,9 @@ class Home extends Component {
 
   render() {
     let text="";
-    if(this.props.history.location.pathname==="/buzz"){
+    if(this.props.history.location.pathname==="/profile"){
+      text="Have a look at your profile...";
+    }else if(this.props.history.location.pathname==="/buzz"){
       text="Creating buzz around you has never been so easy...";
     }else if(this.props.history.location.pathname==="/complaint"||this.props.history.location.pathname==="/resolved"){
       text="You can now log complaints on a single click...";
