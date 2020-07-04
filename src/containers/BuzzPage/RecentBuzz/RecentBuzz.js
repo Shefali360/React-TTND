@@ -48,6 +48,32 @@ class RecentBuzzData extends Component {
     )
   }
   getBuzz = (skip) => {
+  if(this.props.filters){
+    const filter={};
+    filter["userId"]=this.props.filters;
+    this.buzzEndpointToGetBuzz(skip,filter)
+    .then((res) => {
+      const buzz = Array.from(this.state.buzz);
+      buzz.push(...res.data);
+      this.setState({
+        buzz: buzz,
+        skip: skip + 5,
+        hasMore: !(res.data.length < this.limit),
+        spinner: false,
+      });
+    })
+    .catch((err) => {
+      this.setState({ error: true, spinner: false });
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    });
+  }
+else{
    this.buzzEndpointToGetBuzz(skip,this.state.filters)
       .then((res) => {
         const buzz = Array.from(this.state.buzz);
@@ -69,6 +95,7 @@ class RecentBuzzData extends Component {
           this.setState({ networkErr: true });
         }
       });
+    }
   };
 
   componentDidMount() {
@@ -76,7 +103,7 @@ class RecentBuzzData extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.submitted.submitted > prevProps.submitted.submitted) {
+    if (this.props.submitted&&this.props.submitted.submitted > prevProps.submitted.submitted) {
       this.setState({ buzz: [], spinner: true, hasMore: false });
       this.getBuzz(0);
     }
@@ -334,7 +361,7 @@ class RecentBuzzData extends Component {
           ? alert("Please check your internet connection")
           : null}
         <h4 className={styles.heading}>
-          <i className="fa fa-at"></i>Recent Buzz
+          <i className="fa fa-at"></i>{this.props.heading}
         </h4>
         <div className={styles.filterBar}>
           <div className={sharedStyles.search}>
@@ -346,6 +373,7 @@ class RecentBuzzData extends Component {
               // onChange={this.handleFilterChange}
             />
             </div>
+            {!(this.props.filters)?
             <div>
           <div className={dropdownStyles.dropdown}>
             <Dropdown
@@ -365,7 +393,7 @@ class RecentBuzzData extends Component {
             onClick={this.resetFilters}
             title="Reset Filters"
           ></i>
-          </div>
+          </div>:null}
       </div>
         <ul className={styles.List}>
           <InfiniteScroll

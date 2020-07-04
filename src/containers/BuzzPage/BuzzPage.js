@@ -17,7 +17,7 @@ class BuzzPage extends Component{
     return(
         <div> 
             <CreateBuzz submitted={this.buzzSubmitted}/>
-            <RecentBuzz submitted={this.state.buzzSubmitted} />
+            <RecentBuzz submitted={this.state.buzzSubmitted} heading="Recent Buzz"/>
         </div>
     );
 }
