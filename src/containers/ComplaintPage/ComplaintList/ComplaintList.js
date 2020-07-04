@@ -10,7 +10,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import errorStyles from "../../BuzzPage/RecentBuzz/RecentBuzzFile/RecentBuzz";
 import Dropdown from "../../../components/Dropdown/Dropdown";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
-import { complaintsEndpoint, userEndpoint,departmentEndpoint } from "../../../APIs/APIEndpoints";
+import { complaintsEndpoint, userEndpoint } from "../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../store/actions";
 import Loader from "../../../components/Loader/Loader";
 import EditComplaintPopup from "../../../components/EditComplaintPopup/EditComplaintPopup";
@@ -238,20 +238,12 @@ class UserComplaintList extends Component {
           dept["_id"]=res.data.department;
           user["email"] = res.data.assignedTo;
           await authorizedRequestsHandler()
-          .get(departmentEndpoint+`?skip=0&limit=1&`+stringify(dept))
-          .then((res) => {
-            const deptData = res.data[0];
-            this.setState({
-              deptData: deptData,
-            });
-          })
-          .catch((err) => console.log(err));
-          await authorizedRequestsHandler()
             .get(userEndpoint + `?skip=0&limit=1&` + stringify(user))
             .then((res) => {
               const userData = res.data[0];
               this.setState({
-                userData: { name: userData.name, email: userData.email },
+                userData: { name: userData.name, email: userData.email},
+                deptData: userData.department
               });
             })
             .catch((err) => console.log(err));
