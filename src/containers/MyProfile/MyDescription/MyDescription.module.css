@@ -1,0 +1,67 @@
+.profile {
+    margin-top: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.profile h4 {
+    padding: 10px 0px;
+    background-color: #eeeeee;
+    border-bottom:2px solid #ccc;
+}
+.description{
+    color:#D8763A;
+    padding:50px 0;
+   
+}
+
+.edit{
+    position: absolute;
+    right:0;
+    top:8px;
+    font-weight: bold;
+   color:#D8763A;
+}
+
+.editPic{
+    font-size:20px;
+    color:#aaa;
+}
+.profile ul{
+    list-style-type: none;
+    margin-top:15px;
+}
+
+.profile i{
+    margin-right: 10px;
+}
+
+.profile li{
+    font-size:14px;
+    padding:7px 0;
+}
+.profile h4:before {
+    content: '\f040';
+    font-family: FontAwesome;
+    margin: 10px;
+    color: gray;
+}
+
+.descBox{
+    background-color: #fff;
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+}
+
+.picture{
+    padding:50px 0;
+}
+
+.profilePic{
+    height:120px;
+    width:120px;
+    border-radius:50%;
+}
+
