@@ -53,6 +53,7 @@ class Complaints extends Component{
               hasMore: !(res.data.length < this.limit),
               spinner: false,
             });
+           
           })
           .catch((err) => {
             this.setState({ error: true, spinner: false });
@@ -125,6 +126,7 @@ class Complaints extends Component{
           .get(departmentEndpoint)
           .then((res) => {
             const dept = this.departmentArray(res.data);
+            console.log(dept);
             this.setState({ deptArray: dept, spinner: false });
           })
           .catch((err) => {
@@ -201,6 +203,7 @@ class Complaints extends Component{
       }
     
     render(){
+      console.log(this.state.allComplaintsList);
         let tableData = null;
         if (this.state.spinner) {
           tableData = (

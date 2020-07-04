@@ -11,7 +11,7 @@ class SuperAdmin extends Component{
     state = {
         deptArray: [],
         error: false,
-        spinner: false,
+        spinner: true,
         networkErr: false,
       };
     
@@ -22,14 +22,15 @@ class SuperAdmin extends Component{
             this.setState({ deptArray: res.data, spinner: false });
           })
           .catch((err) => {
+            console.log(err);
             this.setState({ error: true, spinner: false });
             // const errorCode = err.response.data.errorCode;
             // if (errorCode === "INVALID_TOKEN") {
             //   this.props.errorOccurred();
             // }
-            if (err.response.status === 500) {
-              this.setState({ networkErr: true });
-            }
+            // if (err.response.status === 500) {
+            //   this.setState({ networkErr: true });
+            // }
           });
       };
 
