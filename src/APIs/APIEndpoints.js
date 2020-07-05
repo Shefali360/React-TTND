@@ -15,3 +15,5 @@ export const signinEndpoint = "/signin";
 export const logoutEndpoint = "/logout";
 export const departmentEndpoint="/department";
 export const userEndpoint="/users";
+export const updateProfileEndpoint="/users/update-profile";
+export const updateProfilePictureEndpoint="/users/update-profile-pic";
