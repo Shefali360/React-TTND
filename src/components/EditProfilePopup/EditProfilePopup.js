@@ -16,7 +16,7 @@ const EditProfile=(props)=>{
           <label>Date of Birth:</label>
           <input type="date" name="dob" placeholder="Date of Birth.." value={props.dob} onChange={props.handleChange}/>
           <label>Mobile No:</label>
-          <input type="tel" name="phone" placeholder="99999-99999"value={props.phone} pattern="[0-9]{5}-[0-9]{5}" onChange={props.handleChange}/>
+          <input type="tel" name="phone" placeholder="99999-99999" value={props.phone} pattern="[0-9]{5}-[0-9]{5}" onChange={props.handleChange}/>
               {props.spinner ? <SmallSpinner /> : null}
               <button
                 className={buzzStyles.button}
