@@ -14,6 +14,7 @@ import { complaintsEndpoint, userEndpoint } from "../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../store/actions";
 import Loader from "../../../components/Loader/Loader";
 import EditComplaintPopup from "../../../components/EditComplaintPopup/EditComplaintPopup";
+import DeleteAssurancePopup from "../../../components/DeleteAssurance/DeleteAssurance";
 
 class UserComplaintList extends Component {
   state = {
@@ -24,7 +25,7 @@ class UserComplaintList extends Component {
     searchInput: "",
     editedDept: "",
     initialDept: "",
-    deptdata:{},
+    deptdata: {},
     title: "",
     concern: "",
     files: [],
@@ -41,6 +42,8 @@ class UserComplaintList extends Component {
     issueEmpty: false,
     concernEmpty: false,
     userData: {},
+    deletePopupVisible: false,
+    deletionId: null,
   };
   limit = 10;
   statusArray = [
@@ -51,7 +54,6 @@ class UserComplaintList extends Component {
   ];
 
   getComplaints = (skip) => {
-    
     authorizedRequestsHandler()
       .get(
         complaintsEndpoint +
@@ -216,11 +218,15 @@ class UserComplaintList extends Component {
   submitHandler = (event) => {
     event.preventDefault();
     let formData = new FormData();
-    if(this.state.files.length>0){
-    for(let i=0;i<this.state.files.length;i++){
-        formData.append("files",this.state.files[i],this.state.files[i]["name"])
+    if (this.state.files.length > 0) {
+      for (let i = 0; i < this.state.files.length; i++) {
+        formData.append(
+          "files",
+          this.state.files[i],
+          this.state.files[i]["name"]
+        );
+      }
     }
-  }
     if (this.state.editedDept !== this.state.initialDept) {
       formData.append("department", this.state.editedDept);
     }
@@ -234,16 +240,16 @@ class UserComplaintList extends Component {
         const index = array.findIndex((ele) => ele._id === this.state.id);
         if (this.state.initialDept !== this.state.editedDept) {
           const user = {};
-          const dept={};
-          dept["_id"]=res.data.department;
+          const dept = {};
+          dept["_id"] = res.data.department;
           user["email"] = res.data.assignedTo;
           await authorizedRequestsHandler()
             .get(userEndpoint + `?skip=0&limit=1&` + stringify(user))
             .then((res) => {
               const userData = res.data[0];
               this.setState({
-                userData: { name: userData.name, email: userData.email},
-                deptData: userData.department
+                userData: { name: userData.name, email: userData.email },
+                deptData: userData.department,
               });
             })
             .catch((err) => console.log(err));
@@ -252,7 +258,8 @@ class UserComplaintList extends Component {
         }
         array[index].issue = res.data.issue;
         array[index].concern = res.data.concern;
-        if(res.data.files.length>0){array[index].files=res.data.files;
+        if (res.data.files.length > 0) {
+          array[index].files = res.data.files;
         }
         this.setState({
           editedDept: "",
@@ -262,7 +269,7 @@ class UserComplaintList extends Component {
           concern: "",
           files: [],
           spinner: false,
-          editClicked:false
+          editClicked: false,
         });
         this.handle = setTimeout(() => {
           this.setState({ formSubmitted: false });
@@ -310,18 +317,21 @@ class UserComplaintList extends Component {
       });
   };
 
-  deleteComplaint = (id) => {
+  deleteComplaint = () => {
     authorizedRequestsHandler()
-      .delete(complaintsEndpoint + `/${id}`)
+      .delete(complaintsEndpoint + `/${this.state.deletionId}`)
       .then((res) => {
         let arr = this.state.complaintsList;
         for (let i in arr) {
-          if (arr[i]._id === id) {
+          if (arr[i]._id === this.state.deletionId) {
             arr.splice(i, 1);
             break;
           }
         }
-        this.setState({ complaintsList: this.state.complaintsList });
+        this.setState({
+          complaintsList: this.state.complaintsList,
+          deletePopupVisible: false,
+        });
       })
 
       .catch((err) => {
@@ -333,6 +343,14 @@ class UserComplaintList extends Component {
           this.setState({ networkErr: true });
         }
       });
+  };
+
+  showDeletePopup = (id) => {
+    this.setState({ deletePopupVisible: true, deletionId: id });
+  };
+
+  closeDeletePopup = () => {
+    this.setState({ deletePopupVisible: false });
   };
 
   render() {
@@ -387,7 +405,7 @@ class UserComplaintList extends Component {
               ></i>
               <i
                 className={["fa fa-times", styles.delete].join(" ")}
-                onClick={() => this.deleteComplaint(complaint._id)}
+                onClick={() => this.showDeletePopup(complaint._id)}
               ></i>
             </td>
           </tr>
@@ -480,6 +498,15 @@ class UserComplaintList extends Component {
           <ComplaintPopup
             complaint={this.state.complaint}
             click={this.closePopup}
+          />
+        ) : null}
+        {this.state.deletePopupVisible ? (
+          <DeleteAssurancePopup
+            name="Complaint"
+            message="Are you sure you want to delete this complaint?"
+            delete={this.deleteComplaint}
+            cancel={this.closeDeletePopup}
+            class={styles.deletePopup}
           />
         ) : null}
         {this.state.editClicked ? (

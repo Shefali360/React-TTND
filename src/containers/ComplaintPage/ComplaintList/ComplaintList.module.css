@@ -53,6 +53,9 @@
     background-color: #fff;
 }
 
+.deletePopup{
+    width:40%;
+}
 .complaintsList tr:nth-child(even) { background: #eee; }
 
 .search{
