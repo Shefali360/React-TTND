@@ -1,13 +1,16 @@
 import React, { Component } from "react";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroller";
 import { stringify } from "query-string";
 import Loader from "../../../components/Loader/Loader";
-import { userEndpoint, departmentEndpoint } from "../../../APIs/APIEndpoints";
+import { userEndpoint, updatePrivilegesEndpoint } from "../../../APIs/APIEndpoints";
 import complaintStyles from "../../../containers/ComplaintPage/ComplaintList/ComplaintList.module.css";
 import Spinner from "../../../components/Spinner/Spinner";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
 import styles from "./Users.module.css";
+import Dropdown from "../../../components/Dropdown/Dropdown";
+import dropdownStyles from "../../../components/Dropdown/Dropdown.module.css";
+import sharedStyles from "../../ResolvedPage/AllComplaintsList/AllComplaintsList.module.css";
 
 class Users extends Component {
   state = {
@@ -17,19 +20,16 @@ class Users extends Component {
     spinner: true,
     error: false,
     allUsersList: [],
-    dept:''
+    department:'',
+    role:''
   };
 
-  limit = 10;
-
-  getDepartment = (department) => {
-    const dept = {};
-    dept["_id"] = department;
-    authorizedRequestsHandler()
-      .get(departmentEndpoint + `?skip=0&limit=1&` + stringify(dept))
-      .then((res) =>{ this.setState({ dept: res.data.department })})
-      .catch((err) => console.log(err));
-  };
+  limit =10;
+  roleArray = [
+    { value: "", name: "Role" },
+    { value: "User", name: "User" },
+    { value: "Admin", name: "Admin" },
+  ];
 
   getAllUsers = (skip) => {
     authorizedRequestsHandler()
@@ -57,6 +57,110 @@ class Users extends Component {
     this.getAllUsers(this.state.skip);
   }
 
+  handleChange = (event,email) => {
+     authorizedRequestsHandler()
+        .patch(
+          updatePrivilegesEndpoint+`/${email}`,
+          { [event.target.name]: event.target.value }
+        )
+        .then((res) => {
+         console.log(res);
+        })
+        .catch((err) => {
+          const errorCode=err.response.data.errorCode;
+          if(errorCode==="INVALID_TOKEN"){
+             this.props.errorOccurred();
+          }
+          if(err.response.status===500){
+            this.setState({networkErr:true});
+          }
+        });
+}
+
+handleFilterChange = (event) => {
+  this.setState({ [event.target.name]: event.target.value });
+};
+
+
+applyFilters = () => {
+  const filters = {};
+  if (this.state.department) {
+    filters["department"] = this.state.department;
+  }
+  if (this.state.role) {
+    filters["role"] = this.state.role;
+  }
+console.log(filters);
+  this.setState({ filters: filters, skip: 0, hasMore: false });
+  authorizedRequestsHandler()
+    .get(
+      userEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filters)
+    )
+    .then((res) => {
+      console.log(res);
+      if (res.data.length !== 0) {
+        this.setState({
+          allUsersList: res.data,
+          skip: this.limit,
+          hasMore: !(res.data.length < this.limit),
+        });
+      } else if (res.data.length === 0) {
+        this.setState({allUsersList: [] });
+      }
+    })
+    .catch((err) => {
+      this.setState({ error: true });
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    });
+};
+
+resetFilters = () => {
+  this.setState({
+    filters: {},
+    skip: 0,
+    department: "",
+    role:"",
+    hasMore: false,
+  });
+  authorizedRequestsHandler()
+    .get(userEndpoint + `?skip=0&limit=${this.limit}`)
+    .then((res) => {
+      this.setState({
+        allUsersList: res.data,
+        skip: this.limit,
+        hasMore: !(res.data.length < this.limit),
+      });
+    })
+    .catch((err) => {
+      this.setState({ error: true });
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    });
+};
+
+removeSuperAdmin=()=>{
+  let user=this.state.allUsersList;
+  for(let i=0;i<user.length;i++){
+    if(user[i].role==="SuperAdmin"){
+     user.splice(i,1);
+     break;
+    }
+}
+
+  return user;
+}
+
   render() {
     let userData = null;
     if (this.state.spinner) {
@@ -83,25 +187,91 @@ class Users extends Component {
         </tr>
       );
     else {
-      let user = this.state.allUsersList;
+      let user = this.removeSuperAdmin();
+     if(!this.state.filters.department){
+        user=user.filter((userData)=>{
+        return !userData.department
+      })
+    }
       userData = user.map((user) => {
         return (
           <tr key={user._id}>
             <td colSpan={2}>{user.email}</td>
-            <td><Link className={styles.name} to={{pathname:"/profile",state:{email:user.email}}}>{user.name}</Link></td>
-            <td>{user.role}</td>
-            <td>{user.department&&user.department.department}</td>
+            <td>
+              <Link
+                className={styles.name}
+                to={{ pathname: "/profile", state: { email: user.email } }}
+              >
+                {user.name}
+              </Link>
+            </td>
+            <td>
+              <div className={dropdownStyles.dropdown}>
+                <Dropdown
+                 defaultvalue={user.role}
+                  name="role"
+                  change={(event)=>this.handleChange(event,user.email)}
+                  array={this.roleArray}
+                />
+              </div>
+            </td>
+            <td>
+              <div className={dropdownStyles.dropdown}>
+                <Dropdown
+                  name="department"
+                  defaultvalue={(user.department)?user.department.department:""}
+                  change={(event)=>this.handleChange(event,user.email)}
+                  array={this.props.deptArray}
+                />
+              </div>
+            </td>
           </tr>
         );
       });
     }
 
     return (
-      <div className={[complaintStyles.complaintsList,styles.box].join(' ')}>
+      <div className={[complaintStyles.complaintsList, styles.box].join(" ")}>
         {this.state.networkErr
           ? alert("Please check your internet connection")
           : null}
         <h4>All Users</h4>
+        <div className={sharedStyles.filterFields}>
+          <div className={dropdownStyles.dropdown}>
+            <Dropdown
+              name="role"
+              value={this.state.role}
+              change={this.handleFilterChange}
+              array={this.roleArray}
+            />
+          </div>
+          <div className={dropdownStyles.dropdown}>
+            <Dropdown
+              name="department"
+              value={this.state.department}
+              change={this.handleFilterChange}
+              array={this.props.deptArray}
+            />
+          </div>
+          <i
+            className={["fa fa-check", sharedStyles.check].join(" ")}
+            onClick={this.applyFilters}
+            title="Apply Filters"
+          ></i>
+          <i
+            className={["fa fa-undo", sharedStyles.undo].join(" ")}
+            onClick={this.resetFilters}
+            title="Reset Filters"
+          ></i>
+          <div className={sharedStyles.mobileButtons}>
+            <button className={sharedStyles.apply} onClick={this.applyFilters}>
+              Apply Filters
+            </button>
+            <button className={sharedStyles.reset} onClick={this.resetFilters}>
+              Reset Filters
+            </button>
+          </div>
+        </div>
         <div className={complaintStyles.tableContainer}>
           <table>
             <thead>

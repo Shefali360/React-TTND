@@ -10,16 +10,26 @@ class SuperAdmin extends Component{
 
     state = {
         deptArray: [],
+        dept:[],
         error: false,
         spinner: true,
         networkErr: false,
+      };
+
+      departmentArray = (department) => {
+        let deptArray = [{value:"",name:"Department"}];
+        department.forEach((dept) => {
+          deptArray.push({ value: dept._id, name: dept.department });
+        });
+        return deptArray;
       };
     
       getDepartment = () => {
         authorizedRequestsHandler()
           .get(departmentEndpoint)
           .then((res) => {
-            this.setState({ deptArray: res.data, spinner: false });
+            const dept=this.departmentArray(res.data);
+            this.setState({ deptArray: res.data,dept:dept, spinner: false });
           })
           .catch((err) => {
             console.log(err);
@@ -34,15 +44,12 @@ class SuperAdmin extends Component{
           });
       };
 
-      componentDidMount(){
-          this.getDepartment();
-      }
     render(){
     return(
         <div>
         <div className={styles.userAndDeptTable}>
-        <Users/>
-        <Department deptArray={this.state.deptArray} state={this.state}/>
+        <Users deptArray={this.state.dept}/>
+        <Department deptArray={this.state.deptArray} state={this.state} getDept={this.getDepartment}/>
         </div>
         <Complaints/>
         </div>

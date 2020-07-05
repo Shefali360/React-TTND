@@ -21,6 +21,10 @@ class Department extends Component {
     editPopupVisible: false,
   };
 
+
+  componentDidMount(){
+    this.props.getDept();
+  }
   openPopup = () => {
     this.setState({
       popupVisible: true,
