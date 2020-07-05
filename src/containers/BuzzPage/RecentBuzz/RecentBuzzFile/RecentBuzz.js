@@ -16,6 +16,7 @@ class RecentBuzz extends Component {
     disliked: this.props.buzz.disliked || false,
     updateReview: false,
     networkErr: false,
+    deletePopupVisible:false
   };
 
   timed = (duration) => {
@@ -112,6 +113,7 @@ class RecentBuzz extends Component {
     }
   };
 
+
   toggleDislike = () => {
     const dislike = !this.state.disliked;
     this.setState({ updateReview: true });
@@ -196,8 +198,8 @@ class RecentBuzz extends Component {
             ></i>
             <i
               className={
-               ["fa fa-trash",styles.editButtons].join(' ')}
-               onClick={this.props.deleteClick}
+               ["fa fa-tras h",styles.editButtons].join(' ')}
+               onClick={this.props.show}
             ></i>
           </span>:null}
           <span className={styles.date}>

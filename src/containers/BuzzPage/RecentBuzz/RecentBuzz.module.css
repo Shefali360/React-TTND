@@ -36,6 +36,9 @@
     color:gray;
 }
 
+.deletePopup{
+    width:35%;
+}
 .List {
     overflow-y: scroll;
     overflow-x: hidden;

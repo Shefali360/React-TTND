@@ -22,9 +22,16 @@
 
 .editButtons{
     margin:0px 10px;
-    color:gray;
     font-weight: bold;
     cursor: pointer;
+}
+
+.editButtons:first-child{
+    color:#1a73e8;
+}
+
+.editButtons:last-child{
+    color: #e04a32;
 }
 .buzzes .dateMobile{
     display:none;
