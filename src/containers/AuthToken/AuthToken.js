@@ -13,7 +13,7 @@ class AuthToken extends Component {
     const validToken = this.props.data && this.props.data.access_token;
     if (validToken) {
       this.props.getUser();
-      return <Redirect to="/buzz" />;
+      return <Redirect to="/profile" />;
     } else if (this.props.tokenError) {
       let error = this.props.tokenError;
       let errorData = null;
