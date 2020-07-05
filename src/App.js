@@ -15,6 +15,7 @@ import NotFound from './components/NotFound/NotFound';
 import Error from './hoc/Error/Error';
 import SuperAdmin from './containers/SuperAdmin/SuperAdmin';
 import MyProfile from './containers/MyProfile/MyProfile';
+import Profile from './containers/Profile/Profile';
 
 const App=()=>{
   return (
@@ -28,7 +29,8 @@ const App=()=>{
           <Route component={({match})=>
           <>
         <Switch>
-        <PrivateRoute exact path="/profile"><MyProfile/></PrivateRoute>
+        <PrivateRoute exact path="/myprofile"><MyProfile/></PrivateRoute>
+        <PrivateRoute exact path="/profile"><Profile/></PrivateRoute>
         <PrivateRoute exact path="/buzz"><BuzzPage/></PrivateRoute>
         <PrivateRoute exact path="/complaint"><ComplaintPage/></PrivateRoute>
         <AuthenticatedRoute exact path="/resolved"><ResolvedPage/></AuthenticatedRoute>
