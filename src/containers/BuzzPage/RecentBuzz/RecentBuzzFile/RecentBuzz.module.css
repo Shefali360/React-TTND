@@ -62,6 +62,11 @@
     margin-bottom: 5px;
 }
 
+.name{
+    color:#1a73e8;
+    margin-right:10px;
+}
+
 
 .duration{
     color:gray;

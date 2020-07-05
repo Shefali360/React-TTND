@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
+import {Link} from "react-router-dom";
+import {connect} from "react-redux";
 import Spinner from "../../../components/Spinner/Spinner";
 import styles from "./ComplaintList.module.css";
 import ComplaintPopup from "../../../components/ComplaintPopup/ComplaintPopup";
@@ -392,9 +393,13 @@ class UserComplaintList extends Component {
                 }}
               >
                 {complaint.issueId}
+
               </button>
             </td>
-            <td>{complaint.assignedTo.name}</td>
+            <td><Link className={styles.name} to={{pathname:"/profile",state:{email:complaint.assignedTo.email}}}>
+                {complaint.assignedTo.name}
+                </Link>
+              </td>
             <td className={this.statusColor(complaint.status)}>
               {complaint.status}
             </td>

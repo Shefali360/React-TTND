@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
+import {Link} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroller";
 import { stringify } from "query-string";
 import Loader from "../../../components/Loader/Loader";
@@ -88,7 +88,7 @@ class Users extends Component {
         return (
           <tr key={user._id}>
             <td colSpan={2}>{user.email}</td>
-            <td>{user.name}</td>
+            <td><Link className={styles.name} to={{pathname:"/profile",state:{email:user.email}}}>{user.name}</Link></td>
             <td>{user.role}</td>
             <td>{user.department&&user.department.department}</td>
           </tr>

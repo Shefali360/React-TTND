@@ -41,7 +41,6 @@ class MyProfile extends Component{
         const userdata=this.state.user;
         return(
             <>
-            
             <MyDescription name={userdata.name}picture={userdata.picture} email={userdata.email} role={userdata.role}
             department={userdata.department&&userdata.department.department} dob={userdata.dob&&userdata.dob}
             phone={userdata.phone&&userdata.phone} spinner={this.state.spinner} getUser={this.getUser}/>

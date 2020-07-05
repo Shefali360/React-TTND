@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {Link} from "react-router-dom";
 import dropdownStyles from "../../../components/Dropdown/Dropdown.module.css";
 import styles from "./AllComplaintsList.module.css";
 import sharedStyles from "../../ComplaintPage/ComplaintList/ComplaintList.module.css";
@@ -326,7 +327,7 @@ class AllComplaintsList extends Component {
             >
               {complaint.issueId}
             </td>
-            <td>{complaint.lockedBy.name}</td>
+            <td><Link className={styles.name} to={{pathname:"/profile",state:{email:complaint.lockedBy.email}}}>{complaint.lockedBy.name}</Link></td>
             <td>
               <div className={dropdownStyles.dropdown}>
                 <select

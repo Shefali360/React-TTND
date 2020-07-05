@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {Link} from "react-router-dom";
 import styles from "./RecentBuzz.module.css";
 import Corousel from "../../../../components/Corousel/Corousel";
 import { connect } from "react-redux";
@@ -198,7 +199,7 @@ class RecentBuzz extends Component {
             ></i>
             <i
               className={
-               ["fa fa-tras h",styles.editButtons].join(' ')}
+               ["fa fa-trash",styles.editButtons].join(' ')}
                onClick={this.props.show}
             ></i>
           </span>:null}
@@ -224,7 +225,7 @@ class RecentBuzz extends Component {
               }
               alt="Profile Pic"
             />
-            <span className={styles.userId}>{this.props.buzz.user.name}</span>
+            <Link className={styles.name} to={{pathname:"/profile",state:{email:this.props.buzz.userId}}}>{this.props.buzz.user.name}</Link>
             <span className={styles.duration}>
               {this.timed(this.props.duration)}
             </span>

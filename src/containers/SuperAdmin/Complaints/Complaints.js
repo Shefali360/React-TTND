@@ -1,4 +1,5 @@
 import React,{Component} from 'react';
+import {Link} from 'react-router-dom';
 import { connect } from "react-redux";
 import ComplaintPopup from "../../../components/ComplaintPopup/ComplaintPopup";
 import InfiniteScroll from "react-infinite-scroller";
@@ -126,7 +127,6 @@ class Complaints extends Component{
           .get(departmentEndpoint)
           .then((res) => {
             const dept = this.departmentArray(res.data);
-            console.log(dept);
             this.setState({ deptArray: dept, spinner: false });
           })
           .catch((err) => {
@@ -203,7 +203,6 @@ class Complaints extends Component{
       }
     
     render(){
-      console.log(this.state.allComplaintsList);
         let tableData = null;
         if (this.state.spinner) {
           tableData = (
@@ -244,8 +243,8 @@ class Complaints extends Component{
                     {complaint.issueId}
                   </button>
                 </td>
-                <td>{complaint.lockedBy.name}</td>
-                <td>{complaint.assignedTo.name}</td>
+                <td><Link className={styles.name} to={{pathname:"/profile",state:{email:complaint.lockedBy.email}}}>{complaint.lockedBy.name}</Link></td>
+                <td><Link className={styles.name} to={{pathname:"/profile",state:{email:complaint.assignedTo.email}}}>{complaint.assignedTo.name}</Link></td>
                 <td className={this.statusColor(complaint.status)}>
                   {complaint.status}
                 </td>

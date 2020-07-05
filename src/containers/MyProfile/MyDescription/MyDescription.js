@@ -98,18 +98,17 @@ class MyDescription extends Component {
   }
 
   render() {
-      console.log(this.props.picture);
     let description = null;
     if (this.props.spinner) {
       description = <Spinner />;
     } else {
       description = (
         <div className={styles.descBox}>
-          <i
+          {(this.props.email===this.props.user.email)?<i
             className={["fa fa-edit", styles.edit].join(" ")}
             onClick={this.editProfile}
             title="Edit Profile"
-          />
+          />:null}
           <div className={styles.picture}>
             <img
               className={styles.profilePic}
@@ -131,17 +130,17 @@ class MyDescription extends Component {
                   onChange={this.fileChange}
                 />
                 <div className={buzzStyles.fakeUpload}>
-                <i
+                {(this.props.email===this.props.user.email)?<i
               className={["fa fa-plus-circle", styles.editPic].join(" ")}
               title="Edit Profile Picture"
-            />
+            />:null}
                 </div>
               </div>
-                <i
+              {(this.props.email===this.props.user.email)?<i
               className={["fa fa-check",styles.check].join(" ")}
               onClick={this.uploadPicture}
               title="Upload Profile Picture"
-            />
+            />:null}
           </div>
           <div className={styles.description}>
             <h2>{this.props.name}</h2>
@@ -193,6 +192,13 @@ class MyDescription extends Component {
   }
 }
 
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user.data,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
     return {
       getUserData: () => dispatch(getUserData()),
@@ -200,4 +206,4 @@ const mapDispatchToProps = (dispatch) => {
   };
   
 
-export default connect(null,mapDispatchToProps)(MyDescription);
+export default connect(mapStateToProps,mapDispatchToProps)(MyDescription);
