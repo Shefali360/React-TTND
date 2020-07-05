@@ -31,9 +31,12 @@ class Home extends Component {
   }
 
   render() {
+    console.log(this.props);
     let text="";
-    if(this.props.history.location.pathname==="/profile"){
+    if(this.props.history.location.pathname==="/myprofile"){
       text="Have a look at your profile...";
+    } else if(this.props.history.location.pathname==="/profile"){
+      text="Visit anyone's profile on a single click...";
     }else if(this.props.history.location.pathname==="/buzz"){
       text="Creating buzz around you has never been so easy...";
     }else if(this.props.history.location.pathname==="/complaint"||this.props.history.location.pathname==="/resolved"){
