@@ -31,7 +31,6 @@ class Home extends Component {
   }
 
   render() {
-    console.log(this.props);
     let text="";
     if(this.props.history.location.pathname==="/myprofile"){
       text="Have a look at your profile...";
