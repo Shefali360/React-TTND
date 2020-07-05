@@ -23,6 +23,7 @@
     right:0;
     margin-right:10px;
     margin-top:5px;
+    cursor: pointer;
     color:red;
 }
 .overlay {
