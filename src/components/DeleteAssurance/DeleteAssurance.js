@@ -4,7 +4,7 @@ import styles from './DeleteAssurance.module.css';
 const DeleteAssurance=(props)=>{
     return(
         <div className={styles.overlay}>
-            <div className={styles.popup}>
+            <div className={[styles.popup,props.class].join(' ')}>
             <h5>
              Delete {props.name}
           </h5>
