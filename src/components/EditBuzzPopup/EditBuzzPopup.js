@@ -1,22 +1,24 @@
-import React from 'react';
-import Dropdown from '../Dropdown/Dropdown';
-import sharedStyles from '../Dropdown/Dropdown.module.css';
-import buzzStyles from '../../containers/BuzzPage/CreateBuzz/CreateBuzz.module.css';
-import SmallSpinner from '../SmallSpinner/SmallSpinner';
-import styles from './EditBuzzPopup.module.css';
+import React from "react";
+import Dropdown from "../Dropdown/Dropdown";
+import sharedStyles from "../Dropdown/Dropdown.module.css";
+import buzzStyles from "../../containers/BuzzPage/CreateBuzz/CreateBuzz.module.css";
+import SmallSpinner from "../SmallSpinner/SmallSpinner";
+import styles from "./EditBuzzPopup.module.css";
 
-const EditBuzz=(props)=>{
+const EditBuzz = (props) => {
+  const array = [
+    { value: "", name: "Category" },
+    { value: "Activity buzz", name: "Activity" },
+    { value: "Lost and Found buzz", name: "Lost and Found" },
+  ];
 
-   const array = [
-        { value: "", name: "Category" },
-        { value: "Activity buzz", name: "Activity" },
-        { value: "Lost and Found buzz", name: "Lost and Found" },
-      ];
-
-    return(
-        <div className={styles.overlay}>
-        <div className={styles.popup}>
-        <i className={["fa fa-times",styles.cross].join(' ')} onClick={props.closePopup}/>
+  return (
+    <div className={styles.overlay}>
+      <div className={styles.popup}>
+        <i
+          className={["fa fa-times", styles.cross].join(" ")}
+          onClick={props.closePopup}
+        />
         <h4>Edit Buzz Post </h4>
         <form className={buzzStyles.form}>
           <textarea
@@ -58,7 +60,9 @@ const EditBuzz=(props)=>{
                 </p>
               ) : null}
               {props.categoryEmpty ? (
-                <p className={buzzStyles.errormsg}>Please fill in the category.</p>
+                <p className={buzzStyles.errormsg}>
+                  Please fill in the category.
+                </p>
               ) : null}
               {props.spinner ? <SmallSpinner /> : null}
               <button
@@ -66,18 +70,16 @@ const EditBuzz=(props)=>{
                 type="submit"
                 value="Submit"
                 disabled={props.submitDisabled}
-                onClick={
-                  props.clicked
-                }
+                onClick={props.clicked}
               >
                 <i className="fa fa-play"></i>
               </button>
             </div>
           </div>
         </form>
-        </div>
-        </div>
-    );
-}
+      </div>
+    </div>
+  );
+};
 
 export default EditBuzz;
