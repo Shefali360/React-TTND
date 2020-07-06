@@ -43,14 +43,14 @@ class AuthToken extends Component {
 const mapStateToProps = (state) => {
   return {
     data: state.auth.token,
-    tokenError: state.auth.tokenError
+    tokenError: state.auth.tokenError,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onFetchToken: () => dispatch(actions.fetchToken()),
-    getUser:()=>dispatch(actions.getUserData())
+    getUser: () => dispatch(actions.getUserData()),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AuthToken);
