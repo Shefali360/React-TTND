@@ -1,21 +1,18 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import RouteConfig from "../Config/RouteConfig/RouteConfig";
 
-class AuthenticatedAdminRoute extends Component {
-   
-  render() {
+const AuthenticatedAdminRoute=(props)=> {
     return (
       <RouteConfig
         condition={
-          this.props.user.department
+          props.user.department||props.user.role==="SuperAdmin"
         }
         pathname="/buzz"
-        data={this.props.children}
+        data={props.children}
       />
     );
   }
-}
 
 const mapStateToProps = (state) => {
   return {
