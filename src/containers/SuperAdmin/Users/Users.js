@@ -162,7 +162,6 @@ removeSuperAdmin=()=>{
 }
 
   render() {
-    console.log(this.state.allUsersList);
     let userData = null;
     if (this.state.spinner) {
       userData = (
