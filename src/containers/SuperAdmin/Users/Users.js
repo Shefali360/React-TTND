@@ -84,7 +84,7 @@ handleFilterChange = (event) => {
 
 applyFilters = () => {
   const filters = {};
-  if (this.state.department) {
+  if (this.state.department && this.state.department!=="all") {
     filters["department"] = this.state.department;
   }
   if (this.state.role) {
@@ -162,6 +162,7 @@ removeSuperAdmin=()=>{
 }
 
   render() {
+    console.log(this.state.allUsersList);
     let userData = null;
     if (this.state.spinner) {
       userData = (
@@ -188,7 +189,7 @@ removeSuperAdmin=()=>{
       );
     else {
       let user = this.removeSuperAdmin();
-     if(!this.state.filters.department){
+     if(!(this.state.filters.department||this.state.department==="all")){
         user=user.filter((userData)=>{
         return !userData.department
       })

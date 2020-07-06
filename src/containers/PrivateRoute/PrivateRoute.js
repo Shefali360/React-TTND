@@ -1,32 +1,21 @@
-import React from 'react';
+import React from "react";
 import { connect } from "react-redux";
-import {Route,Redirect} from 'react-router-dom';
+import RouteConfig from "../Config/RouteConfig/RouteConfig";
 
-const PrivateRouteComponent = (props) => (
- 
-    <Route {...props.routeProps} render={() => (
-        
-    ((props.token&&props.token.access_token))? (
-        <div>{props.children}</div>
-        ) : (
-        <Redirect to={{
-            pathname: '/login',
-            state: { from: props.location }
-        }} /> )
-    )} />
-);
-
-const mapStateToProps = (state, ownProps) => {
-
-    return {
-        token:state.auth.token,
-        location: ownProps.path,
-        routeProps: {
-            exact: ownProps.exact,
-            path: ownProps.path
-        }
-    };
+const PrivateRouteComponent = (props) => {
+  return (
+    <RouteConfig
+      condition={props.token && props.token.access_token}
+      pathname="/login"
+      data={props.children}
+    />
+  );
 };
 
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
 
-export default connect(mapStateToProps,{pure:false})(PrivateRouteComponent);
+export default connect(mapStateToProps)(PrivateRouteComponent);

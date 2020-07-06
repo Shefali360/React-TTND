@@ -315,7 +315,7 @@ class AllComplaintsList extends Component {
       tableData = count.map((complaint) => {
         return (
           <tr key={complaint._id}>
-            <td>{complaint.department.department}</td>
+            <td>{(complaint.department)?complaint.department.department:"Not Available"}</td>
             <td
               className={styles.issueId}
               onClick={() => {

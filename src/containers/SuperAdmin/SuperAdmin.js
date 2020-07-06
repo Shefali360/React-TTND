@@ -17,7 +17,7 @@ class SuperAdmin extends Component{
       };
 
       departmentArray = (department) => {
-        let deptArray = [{value:"",name:"Department"}];
+        let deptArray = [{value:"",name:"Department"},{value:"all",name:"All"}];
         department.forEach((dept) => {
           deptArray.push({ value: dept._id, name: dept.department });
         });

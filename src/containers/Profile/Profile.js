@@ -21,7 +21,7 @@ class Profile extends Component {
       .then((res) => {
         this.setState({
           user: res.data[0],
-          spinner: false,
+          spinner: false
         });
       })
       .catch((err) => {
@@ -38,12 +38,15 @@ class Profile extends Component {
     let mymail = null;
     userdata=this.state.user;
     const user = JSON.parse(localStorage.getItem("userData"));
+    const name=this.state.user.name;
+    const firstname=name&&`${name.split(' ')[0]}'s Profile`;
     if (userdata.email === user && user.email) {
       mymail = user.email;
     }
     return (
       <>
         <Description
+          heading={firstname}
           name={userdata.name}
           picture={userdata.picture}
           email={userdata.email}

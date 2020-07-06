@@ -8,8 +8,6 @@ import { departmentEndpoint } from "../../APIs/APIEndpoints";
 
 class ComplaintPage extends Component {
   state = {
-    userName: "",
-    userMail: "",
     complaintSubmitted: { submitted: 0 },
     deptArray: [],
     error: false,

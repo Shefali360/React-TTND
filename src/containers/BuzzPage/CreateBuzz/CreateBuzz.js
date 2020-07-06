@@ -21,14 +21,24 @@ class CreateBuzz extends Component {
     categoryEmpty: false,
     networkErr: false,
   };
-
+  counter = 0;
   array = [
     { value: "", name: "Category" },
     { value: "Activity buzz", name: "Activity" },
     { value: "Lost and Found buzz", name: "Lost and Found" },
   ];
 
-  counter = 0;
+  errorHandler=(err)=>{
+    if(err.response){
+    const errorCode = err.response.data.errorCode;
+    if (errorCode === "INVALID_TOKEN") {
+      this.props.errorOccurred();
+    }
+    if (err.response.status === 500) {
+      this.setState({ networkErr: true });
+    }
+  }
+}
 
   fileChange = (event) => {
     this.setState({ images: event.target.files });
@@ -88,13 +98,7 @@ class CreateBuzz extends Component {
       })
       .catch((err) => {
         this.setState({ spinner: false });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
   render() {

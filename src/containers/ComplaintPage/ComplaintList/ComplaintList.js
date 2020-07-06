@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import {Link} from "react-router-dom";
-import {connect} from "react-redux";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import Spinner from "../../../components/Spinner/Spinner";
 import styles from "./ComplaintList.module.css";
 import ComplaintPopup from "../../../components/ComplaintPopup/ComplaintPopup";
@@ -54,16 +54,40 @@ class UserComplaintList extends Component {
     { value: "Closed", name: "Closed" },
   ];
 
-  getComplaints = (skip) => {
-    authorizedRequestsHandler()
-      .get(
-        complaintsEndpoint +
-          `?skip=${skip}&limit=${this.limit}&` +
-          stringify(this.state.filters)
-      )
+  complaintEndpoint = (skip, filters) => {
+    return authorizedRequestsHandler().get(
+      complaintsEndpoint +
+        `?skip=${skip}&limit=${this.limit}&` +
+        stringify(filters)
+    );
+  };
+
+  errorHandler = (err) => {
+    if (err.response) {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    }
+  };
+
+  fetchComplaints = (skip, filter, filtered) => {
+    this.complaintEndpoint(skip, filter)
       .then((res) => {
-        const complaintsList = Array.from(this.state.complaintsList);
-        complaintsList.push(...res.data);
+        let complaintsList = [];
+        if (filtered === 1) {
+          if (res.data.length !== 0) {
+            complaintsList = res.data;
+          } else if (res.data.length === 0) {
+            complaintsList = [];
+          }
+        } else {
+          complaintsList = Array.from(this.state.complaintsList);
+          complaintsList.push(...res.data);
+        }
         this.setState({
           complaintsList: complaintsList,
           skip: skip + 10,
@@ -73,15 +97,13 @@ class UserComplaintList extends Component {
       })
       .catch((err) => {
         this.setState({ error: true, spinner: false });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
+  getComplaints = (skip) => {
+    this.fetchComplaints(skip, this.state.filters);
+  };
+
   componentDidMount() {
     this.getComplaints(this.state.skip);
   }
@@ -119,36 +141,10 @@ class UserComplaintList extends Component {
     if (this.state.status) {
       filters["status"] = this.state.status;
     }
-    if (this.state.searchInput) {
-      filters["issueId"] = this.state.searchInput.trim().toUpperCase();
-    }
     this.setState({ filters: filters, skip: 0, hasMore: false });
-    authorizedRequestsHandler()
-      .get(
-        complaintsEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filters)
-      )
-      .then((res) => {
-        if (res.data.length !== 0) {
-          this.setState({
-            complaintsList: res.data,
-            skip: this.limit,
-            hasMore: !(res.data.length < this.limit),
-          });
-        } else if (res.data.length === 0) {
-          this.setState({ complaintsList: [] });
-        }
-      })
-      .catch((err) => {
-        this.setState({ error: true });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
-      });
+    this.fetchComplaints(0, filters, 1);
   };
+
   resetFilters = () => {
     this.setState({
       filters: {},
@@ -158,26 +154,9 @@ class UserComplaintList extends Component {
       searchInput: "",
       hasMore: false,
     });
-    authorizedRequestsHandler()
-      .get(complaintsEndpoint + `?skip=0&limit=${this.limit}`)
-      .then((res) => {
-        this.setState({
-          complaintsList: res.data,
-          skip: this.limit,
-          hasMore: !(res.data.length < this.limit),
-        });
-      })
-      .catch((err) => {
-        this.setState({ error: true });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
-      });
+    this.fetchComplaints(0, "", 1);
   };
+
   closeFormPopup = () => {
     this.setState({ editClicked: false });
   };
@@ -277,13 +256,7 @@ class UserComplaintList extends Component {
         }, 1000);
       })
       .catch((err) => {
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
 
@@ -308,13 +281,7 @@ class UserComplaintList extends Component {
       })
       .catch((err) => {
         this.setState({ error: true });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
 
@@ -336,13 +303,7 @@ class UserComplaintList extends Component {
       })
 
       .catch((err) => {
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
 
@@ -384,7 +345,7 @@ class UserComplaintList extends Component {
       tableData = count.map((complaint) => {
         return (
           <tr key={complaint._id}>
-            <td>{complaint.department.department}</td>
+            <td>{(complaint.department)?complaint.department.department:"Not Available"}</td>
             <td>
               <button
                 className={styles.issueId}
@@ -393,13 +354,19 @@ class UserComplaintList extends Component {
                 }}
               >
                 {complaint.issueId}
-
               </button>
             </td>
-            <td><Link className={styles.name} to={{pathname:"/profile",state:{email:complaint.assignedTo.email}}}>
+            <td>
+              <Link
+                className={styles.name}
+                to={{
+                  pathname: "/profile",
+                  state: { email: complaint.assignedTo.email },
+                }}
+              >
                 {complaint.assignedTo.name}
-                </Link>
-              </td>
+              </Link>
+            </td>
             <td className={this.statusColor(complaint.status)}>
               {complaint.status}
             </td>
@@ -523,6 +490,11 @@ class UserComplaintList extends Component {
             deptArray={this.props.deptArray}
             fileChange={this.fileChange}
             closePopup={this.closeFormPopup}
+            departmentEmpty={this.state.departmentEmpty}
+            issueEmpty={this.state.issueEmpty}
+            concernEmpty={this.state.concernEmpty}
+            formSubmitted={this.state.formSubmitted}
+            spinner={this.state.spinner}
             clicked={(event) => {
               this.submitHandler(event);
             }}

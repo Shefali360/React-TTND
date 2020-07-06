@@ -194,7 +194,7 @@ class Department extends Component {
         return (
           <tr key={dept._id}>
             <td>
-              {dept.department}
+              {(dept.department)?dept.department:"Not Available"}
               <i
                 className={["fa fa-edit", styles.edit].join(" ")}
                 onClick={() => this.editDepartment(dept._id)}

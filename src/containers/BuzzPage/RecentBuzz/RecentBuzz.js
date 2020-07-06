@@ -49,54 +49,53 @@ class RecentBuzzData extends Component {
       buzzEndpoint + `?skip=${skip}&limit=${this.limit}&` + stringify(filters)
     );
   };
+
+  errorHandler = (err) => {
+    if (err.response) {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    }
+  };
+
+  fetchBuzz = (skip, filter, filtered) => {
+    this.buzzEndpointToGetBuzz(skip, filter)
+      .then((res) => {
+        let buzz = [];
+        if (filtered === 1) {
+          if (res.data.length !== 0) {
+            buzz = res.data;
+          } else if (res.data.length === 0) {
+            buzz = [];
+          }
+        } else {
+          buzz = Array.from(this.state.buzz);
+          buzz.push(...res.data);
+        }
+        this.setState({
+          buzz: buzz,
+          skip: skip + 5,
+          hasMore: !(res.data.length < this.limit),
+          spinner: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: true, spinner: false });
+        this.errorHandler(err);
+      });
+  };
+
   getBuzz = (skip) => {
     if (this.props.filters) {
       const filter = {};
       filter["userId"] = this.props.filters;
-      this.buzzEndpointToGetBuzz(skip, filter)
-        .then((res) => {
-          const buzz = Array.from(this.state.buzz);
-          buzz.push(...res.data);
-          this.setState({
-            buzz: buzz,
-            skip: skip + 5,
-            hasMore: !(res.data.length < this.limit),
-            spinner: false,
-          });
-        })
-        .catch((err) => {
-          this.setState({ error: true, spinner: false });
-          const errorCode = err.response.data.errorCode;
-          if (errorCode === "INVALID_TOKEN") {
-            this.props.errorOccurred();
-          }
-          if (err.response.status === 500) {
-            this.setState({ networkErr: true });
-          }
-        });
+      this.fetchBuzz(skip, filter);
     } else {
-      this.buzzEndpointToGetBuzz(skip, this.state.filters)
-        .then((res) => {
-          const buzz = Array.from(this.state.buzz);
-          buzz.push(...res.data);
-          this.setState({
-            buzz: buzz,
-            skip: skip + 5,
-            hasMore: !(res.data.length < this.limit),
-            spinner: false,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          this.setState({ error: true, spinner: false });
-          const errorCode = err.response.data.errorCode;
-          if (errorCode === "INVALID_TOKEN") {
-            this.props.errorOccurred();
-          }
-          if (err.response.status === 500) {
-            this.setState({ networkErr: true });
-          }
-        });
+      this.fetchBuzz(skip, this.state.filters);
     }
   };
 
@@ -124,28 +123,7 @@ class RecentBuzzData extends Component {
       filters["category"] = this.state.category;
     }
     this.setState({ filters: filters, skip: 0, hasMore: false });
-    this.buzzEndpointToGetBuzz(0, filters)
-      .then((res) => {
-        if (res.data.length !== 0) {
-          this.setState({
-            buzz: res.data,
-            skip: this.limit,
-            hasMore: !(res.data.length < this.limit),
-          });
-        } else if (res.data.length === 0) {
-          this.setState({ buzz: [] });
-        }
-      })
-      .catch((err) => {
-        this.setState({ error: true });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
-      });
+    this.fetchBuzz(0, filters, 1);
   };
 
   resetFilters = () => {
@@ -155,24 +133,11 @@ class RecentBuzzData extends Component {
       category: "",
       hasMore: false,
     });
-    this.buzzEndpointToGetBuzz(0, "")
-      .then((res) => {
-        this.setState({
-          buzz: res.data,
-          skip: this.limit,
-          hasMore: !(res.data.length < this.limit),
-        });
-      })
-      .catch((err) => {
-        this.setState({ error: true });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
-      });
+    this.fetchBuzz(0, "", 1);
+  };
+
+   closePopup = () => {
+    this.setState({ singleBuzz: {}, editClicked: false });
   };
 
   fileChange = (event) => {
@@ -243,13 +208,7 @@ class RecentBuzzData extends Component {
       .catch((err) => {
         console.log(err);
         this.setState({ spinner: false });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
 
@@ -270,18 +229,8 @@ class RecentBuzzData extends Component {
       .catch((err) => {
         console.log(err);
         this.setState({ error: true });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
-  };
-
-  closePopup = () => {
-    this.setState({ singleBuzz: {}, editClicked: false });
   };
 
   showDeletePopup = (id) => {
@@ -293,6 +242,7 @@ class RecentBuzzData extends Component {
   };
 
   deletePost = () => {
+    this.setState({spinner:true})
     authorizedRequestsHandler()
       .delete(buzzEndpoint + `/${this.state.deletionId}`)
       .then((res) => {
@@ -303,17 +253,14 @@ class RecentBuzzData extends Component {
             break;
           }
         }
-        this.setState({ buzz: this.state.buzz, deletePopupVisible: false });
+        this.setState({
+          buzz: this.state.buzz,
+          deletePopupVisible: false,
+          spinner: false,
+        });
       })
-
       .catch((err) => {
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
   render() {
@@ -437,12 +384,17 @@ class RecentBuzzData extends Component {
             delete={this.deletePost}
             cancel={this.closeDeletePopup}
             class={styles.deletePopup}
+            spinner={this.state.spinner}
           />
         ) : null}
         {this.state.editClicked ? (
           <EditBuzzPopup
             description={this.state.description}
             category={this.state.buzzCategory}
+            descEmpty={this.state.descEmpty}
+            categoryEmpty={this.state.categoryEmpty}
+            spinner={this.state.spinner}
+            submitDisabled={this.state.submitDisabled}
             images={this.state.images}
             change={this.handleChange}
             fileChange={this.fileChange}

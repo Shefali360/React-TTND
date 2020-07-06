@@ -1,23 +1,48 @@
 import React, { Component } from "react";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import styles from "./RecentBuzz.module.css";
 import Corousel from "../../../../components/Corousel/Corousel";
 import { connect } from "react-redux";
 import { authorizedRequestsHandler } from "../../../../APIs/APIs";
-import {buzzLikeEndpoint,buzzDislikeEndpoint } from "../../../../APIs/APIEndpoints";
+import {
+  buzzLikeEndpoint,
+  buzzDislikeEndpoint,
+} from "../../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../../store/actions";
 import { serverURI, pictureURI } from "../../../../APIs/APIEndpoints";
 
-
 class RecentBuzz extends Component {
   state = {
-    likeCount: this.props.buzz.likes|| 0,
+    likeCount: this.props.buzz.likes || 0,
     dislikeCount: this.props.buzz.dislikes || 0,
     liked: this.props.buzz.liked || false,
     disliked: this.props.buzz.disliked || false,
     updateReview: false,
     networkErr: false,
-    deletePopupVisible:false
+    deletePopupVisible: false,
+  };
+
+  errorHandler = (err) => {
+    if (err.response) {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    }
+  };
+
+  buzzReviewEndpoint = (endpoint, id, reverse) => {
+    if (reverse===1) {
+      return authorizedRequestsHandler().patch(
+        endpoint + `/${id}?reverse=1`,
+        null
+      );
+    } else {
+      return authorizedRequestsHandler().patch(endpoint + `/${id}`, null);
+    }
   };
 
   timed = (duration) => {
@@ -51,20 +76,13 @@ class RecentBuzz extends Component {
         likeCount: this.state.likeCount + 1,
         liked: liked,
       });
-      authorizedRequestsHandler()
-        .patch(buzzLikeEndpoint + `/${this.props.buzz._id}`, null)
+      this.buzzReviewEndpoint(buzzLikeEndpoint, this.props.buzz._id,0)
         .then((res) => {
           this.setState({ updateReview: false });
         })
         .catch((err) => {
           this.setState({ updateReview: false });
-          const errorCode = err.response.data.errorCode;
-          if (errorCode === "INVALID_TOKEN") {
-            this.props.errorOccurred();
-          }
-          if (err.response.status === 500) {
-            this.setState({ networkErr: true });
-          }
+          this.errorHandler(err);
         });
 
       if (this.state.disliked) {
@@ -72,23 +90,13 @@ class RecentBuzz extends Component {
           dislikeCount: this.state.dislikeCount - 1,
           disliked: false,
         });
-        authorizedRequestsHandler()
-          .patch(
-            buzzDislikeEndpoint + `/${this.props.buzz._id}?reverse=1`,
-            null
-          )
+        this.buzzReviewEndpoint(buzzDislikeEndpoint, this.props.buzz._id, 1)
           .then((res) => {
             this.setState({ updateReview: false });
           })
           .catch((err) => {
             this.setState({ updateReview: false });
-            const errorCode = err.response.data.errorCode;
-            if (errorCode === "INVALID_TOKEN") {
-              this.props.errorOccurred();
-            }
-            if (err.response.status === 500) {
-              this.setState({ networkErr: true });
-            }
+            this.errorHandler(err);
           });
       }
     } else {
@@ -96,24 +104,16 @@ class RecentBuzz extends Component {
         likeCount: this.state.likeCount - 1,
         liked: liked,
       });
-      authorizedRequestsHandler()
-        .patch(buzzLikeEndpoint + `/${this.props.buzz._id}?reverse=1`, null)
+      this.buzzReviewEndpoint(buzzLikeEndpoint, this.props.buzz._id,1)
         .then((res) => {
           this.setState({ updateReview: false });
         })
         .catch((err) => {
           this.setState({ updateReview: false });
-          const errorCode = err.response.data.errorCode;
-          if (errorCode === "INVALID_TOKEN") {
-            this.props.errorOccurred();
-          }
-          if (err.response.status === 500) {
-            this.setState({ networkErr: true });
-          }
+          this.errorHandler(err);
         });
     }
   };
-
 
   toggleDislike = () => {
     const dislike = !this.state.disliked;
@@ -123,20 +123,13 @@ class RecentBuzz extends Component {
         dislikeCount: this.state.dislikeCount + 1,
         disliked: dislike,
       });
-      authorizedRequestsHandler()
-        .patch(buzzDislikeEndpoint + `/${this.props.buzz._id}`, null)
+      this.buzzReviewEndpoint(buzzDislikeEndpoint, this.props.buzz._id, 0)
         .then((res) => {
           this.setState({ updateReview: false });
         })
         .catch((err) => {
           this.setState({ updateReview: false });
-          const errorCode = err.response.data.errorCode;
-          if (errorCode === "INVALID_TOKEN") {
-            this.props.errorOccurred();
-          }
-          if (err.response.status === 500) {
-            this.setState({ networkErr: true });
-          }
+          this.errorHandler(err);
         });
 
       if (this.state.liked) {
@@ -144,20 +137,13 @@ class RecentBuzz extends Component {
           likeCount: this.state.likeCount - 1,
           liked: false,
         });
-        authorizedRequestsHandler()
-          .patch(buzzLikeEndpoint + `/${this.props.buzz._id}?reverse=1`, null)
+        this.buzzReviewEndpoint(buzzLikeEndpoint, this.props.buzz._id, 1)
           .then((res) => {
             this.setState({ updateReview: false });
           })
           .catch((err) => {
             this.setState({ updateReview: false });
-            const errorCode = err.response.data.errorCode;
-            if (errorCode === "INVALID_TOKEN") {
-              this.props.errorOccurred();
-            }
-            if (err.response.status === 500) {
-              this.setState({ networkErr: true });
-            }
+            this.errorHandler(err);
           });
       }
     } else {
@@ -165,20 +151,13 @@ class RecentBuzz extends Component {
         dislikeCount: this.state.dislikeCount - 1,
         disliked: dislike,
       });
-      authorizedRequestsHandler()
-        .patch(buzzDislikeEndpoint + `/${this.props.buzz._id}?reverse=1`, null)
+      this.buzzReviewEndpoint(buzzLikeEndpoint, this.props.buzz._id,1)
         .then((res) => {
           this.setState({ updateReview: false });
         })
         .catch((err) => {
           this.setState({ updateReview: false });
-          const errorCode = err.response.data.errorCode;
-          if (errorCode === "INVALID_TOKEN") {
-            this.props.errorOccurred();
-          }
-          if (err.response.status === 500) {
-            this.setState({ networkErr: true });
-          }
+          this.errorHandler(err);
         });
     }
   };
@@ -190,19 +169,18 @@ class RecentBuzz extends Component {
           ? alert("Please check your internet connection")
           : null}
         <div className={styles.buzzes}>
-     {(this.props.user.email===this.props.buzz.user.email)?<span className={styles.editButtonsDiv}>
-            <i
-              className={
-                ["fa fa-edit",styles.editButtons].join(' ')}
+          {this.props.user.email === this.props.buzz.user.email ? (
+            <span className={styles.editButtonsDiv}>
+              <i
+                className={["fa fa-edit", styles.editButtons].join(" ")}
                 onClick={this.props.editClick}
-              
-            ></i>
-            <i
-              className={
-               ["fa fa-trash",styles.editButtons].join(' ')}
-               onClick={this.props.show}
-            ></i>
-          </span>:null}
+              ></i>
+              <i
+                className={["fa fa-trash", styles.editButtons].join(" ")}
+                onClick={this.props.show}
+              ></i>
+            </span>
+          ) : null}
           <span className={styles.date}>
             {this.props.dayFormat}/<br />
             {this.props.monthFormat}
@@ -225,7 +203,15 @@ class RecentBuzz extends Component {
               }
               alt="Profile Pic"
             />
-            <Link className={styles.name} to={{pathname:"/profile",state:{email:this.props.buzz.userId}}}>{this.props.buzz.user.name}</Link>
+            <Link
+              className={styles.name}
+              to={{
+                pathname: "/profile",
+                state: { email: this.props.buzz.userId },
+              }}
+            >
+              {this.props.buzz.user.name}
+            </Link>
             <span className={styles.duration}>
               {this.timed(this.props.duration)}
             </span>
@@ -271,11 +257,11 @@ class RecentBuzz extends Component {
   }
 }
 
-const mapStateToProps=(state)=>{
-  return{
-    user:state.user.data
-  }
-}
+const mapStateToProps = (state) => {
+  return {
+    user: state.user.data,
+  };
+};
 const mapDispatchToProps = (dispatch) => {
   return {
     errorOccurred: () => dispatch(errorOccurred()),
