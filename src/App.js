@@ -10,13 +10,15 @@ import Login from './components/Login/Login';
 import AuthToken from './containers/AuthToken/AuthToken';
 import Home from './components/Home/Home';
 import PrivateRoute from './containers/PrivateRoute/PrivateRoute';
-import AuthenticatedRoute from './containers/AuthenticatedRoute/AuthenticatedRoute';
+import AuthenticatedAdminRoute from './containers/AuthenticatedRoute/AuthenticatedAdminRoute';
+import AuthenticatedSuperadminRoute from './containers/AuthenticatedRoute/AuthenticatedSuperadminRoute';
 import NotFound from './components/NotFound/NotFound';
 import Error from './hoc/Error/Error';
 import SuperAdmin from './containers/SuperAdmin/SuperAdmin';
 import MyProfile from './containers/MyProfile/MyProfile';
 import Profile from './containers/Profile/Profile';
-
+import ProtectedRoute from './containers/AuthenticatedRoute/ProfileProtectedRoute';
+import AuthenticateComplaint from './containers/AuthenticatedRoute/AuthenticatedComplaintRoute';
 const App=()=>{
   return (
     <Router>
@@ -30,11 +32,11 @@ const App=()=>{
           <>
         <Switch>
         <PrivateRoute exact path="/myprofile"><MyProfile/></PrivateRoute>
-        <PrivateRoute exact path="/profile"><Profile/></PrivateRoute>
+        <ProtectedRoute exact path="/profile"><Profile/></ProtectedRoute>
         <PrivateRoute exact path="/buzz"><BuzzPage/></PrivateRoute>
-        <PrivateRoute exact path="/complaint"><ComplaintPage/></PrivateRoute>
-        <AuthenticatedRoute exact path="/resolved"><ResolvedPage/></AuthenticatedRoute>
-        <AuthenticatedRoute exact path="/superadmin"><SuperAdmin/></AuthenticatedRoute>
+        <AuthenticateComplaint exact path="/complaint"><ComplaintPage/></AuthenticateComplaint>
+        <AuthenticatedAdminRoute exact path="/resolved"><ResolvedPage/></AuthenticatedAdminRoute>
+        <AuthenticatedSuperadminRoute exact path="/superadmin"><SuperAdmin/></AuthenticatedSuperadminRoute>
         <Route exact path="/about" component={About}/>
         <Route exact path="/help" component={Help}/>
         <Route path="" component={NotFound}/>
