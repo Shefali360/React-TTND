@@ -11,7 +11,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import errorStyles from "../../BuzzPage/RecentBuzz/RecentBuzzFile/RecentBuzz";
 import Dropdown from "../../../components/Dropdown/Dropdown";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
-import { complaintsEndpoint, userEndpoint } from "../../../APIs/APIEndpoints";
+import { complaintsEndpoint, userEndpoint ,departmentEndpoint} from "../../../APIs/APIEndpoints";
 import { errorOccurred } from "../../../store/actions";
 import Loader from "../../../components/Loader/Loader";
 import EditComplaintPopup from "../../../components/EditComplaintPopup/EditComplaintPopup";
@@ -45,6 +45,7 @@ class UserComplaintList extends Component {
     userData: {},
     deletePopupVisible: false,
     deletionId: null,
+    smallspinner:false
   };
   limit = 10;
   statusArray = [
@@ -228,8 +229,16 @@ class UserComplaintList extends Component {
             .then((res) => {
               const userData = res.data[0];
               this.setState({
-                userData: { name: userData.name, email: userData.email },
-                deptData: userData.department,
+                userData: { name: userData.name, email: userData.email }
+              });
+            })
+            .catch((err) => console.log(err));
+            await authorizedRequestsHandler()
+            .get(departmentEndpoint + "?"+ stringify(dept))
+            .then((res) => {
+              const dept = res.data[0];
+              this.setState({
+                deptData: dept,
               });
             })
             .catch((err) => console.log(err));
@@ -286,6 +295,7 @@ class UserComplaintList extends Component {
   };
 
   deleteComplaint = () => {
+    this.setState({smallspinner:true})
     authorizedRequestsHandler()
       .delete(complaintsEndpoint + `/${this.state.deletionId}`)
       .then((res) => {
@@ -299,6 +309,7 @@ class UserComplaintList extends Component {
         this.setState({
           complaintsList: this.state.complaintsList,
           deletePopupVisible: false,
+          smallspinner:false
         });
       })
 
@@ -343,9 +354,10 @@ class UserComplaintList extends Component {
     else {
       let count = this.state.complaintsList;
       tableData = count.map((complaint) => {
+        // console.log(complaint);
         return (
           <tr key={complaint._id}>
-            <td>{(complaint.department)?complaint.department.department:"Not Available"}</td>
+            <td>{complaint.department?complaint.department.department:"Not Available"}</td>
             <td>
               <button
                 className={styles.issueId}
@@ -479,6 +491,7 @@ class UserComplaintList extends Component {
             delete={this.deleteComplaint}
             cancel={this.closeDeletePopup}
             class={styles.deletePopup}
+            spinner={this.state.smallspinner}
           />
         ) : null}
         {this.state.editClicked ? (
