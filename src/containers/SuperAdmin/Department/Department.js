@@ -19,6 +19,7 @@ class Department extends Component {
     department: "",
     submitDisabled: false,
     editPopupVisible: false,
+    spinner:false
   };
 
 
@@ -140,6 +141,7 @@ class Department extends Component {
   };
 
   deleteDepartment = () => {
+    this.setState({spinner:true});
     authorizedRequestsHandler()
       .delete(departmentEndpoint + `/${this.state.id}`)
       .then((res) => {
@@ -150,7 +152,7 @@ class Department extends Component {
             break;
           }
         }
-        this.setState({ deletePopupVisible: false, departmentList: arr });
+        this.setState({ deletePopupVisible: false, departmentList: arr,spinner:false });
       })
       .catch((err) => {
         const errorCode = err.response.data.errorCode;
@@ -195,11 +197,15 @@ class Department extends Component {
           <tr key={dept._id}>
             <td>
               {(dept.department)?dept.department:"Not Available"}
+            </td>
+            <td>
               <i
                 className={["fa fa-edit", styles.edit].join(" ")}
                 onClick={() => this.editDepartment(dept._id)}
                 title="Edit Department"
               ></i>
+              </td>
+              <td>
               <i
                 className={["fa fa-trash", styles.delete].join(" ")}
                 onClick={() => this.showDeletePopup(dept._id)}
@@ -227,6 +233,8 @@ class Department extends Component {
             <thead>
               <tr>
                 <th>Department</th>
+                <th>Edit</th>
+                <th>Delete</th>
               </tr>
             </thead>
             <tbody>{dept || []}</tbody>
@@ -235,6 +243,7 @@ class Department extends Component {
             <DeleteAssurancePopup
               name="Department"
               message="Want to proceed with the deletion?"
+              spinner={this.state.spinner}
               delete={this.deleteDepartment}
               cancel={this.closeDeletePopup}
             />
