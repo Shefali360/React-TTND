@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroller";
 import { stringify } from "query-string";
 import Loader from "../../../components/Loader/Loader";
-import { userEndpoint, updatePrivilegesEndpoint } from "../../../APIs/APIEndpoints";
+import {
+  userEndpoint,
+  updatePrivilegesEndpoint,
+  departmentEndpoint,
+} from "../../../APIs/APIEndpoints";
 import complaintStyles from "../../../containers/ComplaintPage/ComplaintList/ComplaintList.module.css";
 import Spinner from "../../../components/Spinner/Spinner";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
@@ -20,11 +24,11 @@ class Users extends Component {
     spinner: true,
     error: false,
     allUsersList: [],
-    department:'',
-    role:''
+    department: "",
+    role: "",
   };
 
-  limit =10;
+  limit = 10;
   roleArray = [
     { value: "", name: "Role" },
     { value: "User", name: "User" },
@@ -57,109 +61,121 @@ class Users extends Component {
     this.getAllUsers(this.state.skip);
   }
 
-  handleChange = (event,email) => {
-     authorizedRequestsHandler()
-        .patch(
-          updatePrivilegesEndpoint+`/${email}`,
-          { [event.target.name]: event.target.value }
-        )
+  handleChange = async (event, email) => {
+    this.setState({ [event.target.name]: event.target.value });
+    if (event.target.name === "department") {
+      const dept = {};
+      dept["_id"] = event.target.value;
+      await authorizedRequestsHandler()
+        .get(departmentEndpoint + "?" + stringify(dept))
         .then((res) => {
-         console.log(res);
+          this.setState({ department: res.data[0] });
         })
         .catch((err) => {
-          const errorCode=err.response.data.errorCode;
-          if(errorCode==="INVALID_TOKEN"){
-             this.props.errorOccurred();
-          }
-          if(err.response.status===500){
-            this.setState({networkErr:true});
-          }
+          console.log(err);
         });
-}
+    }
+    authorizedRequestsHandler()
+      .patch(
+        updatePrivilegesEndpoint + `/${email}`,
+        !this.state.role
+          ? { department: this.state.department }
+          : { role: this.state.role }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
+      });
+  };
 
-handleFilterChange = (event) => {
-  this.setState({ [event.target.name]: event.target.value });
-};
+  handleFilterChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
 
+  applyFilters = () => {
+    const filters = {};
+    if (this.state.department && this.state.department !== "all") {
+      filters["department"] = this.state.department;
+    }
+    if (this.state.role) {
+      filters["role"] = this.state.role;
+    }
+    console.log(filters);
+    this.setState({ filters: filters, skip: 0, hasMore: false });
+    authorizedRequestsHandler()
+      .get(userEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filters))
+      .then((res) => {
+        console.log(res);
+        if (res.data.length !== 0) {
+          this.setState({
+            allUsersList: res.data,
+            skip: this.limit,
+            hasMore: !(res.data.length < this.limit),
+          });
+        } else if (res.data.length === 0) {
+          this.setState({ allUsersList: [] });
+        }
+      })
+      .catch((err) => {
+        this.setState({ error: true });
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
+      });
+  };
 
-applyFilters = () => {
-  const filters = {};
-  if (this.state.department && this.state.department!=="all") {
-    filters["department"] = this.state.department;
-  }
-  if (this.state.role) {
-    filters["role"] = this.state.role;
-  }
-console.log(filters);
-  this.setState({ filters: filters, skip: 0, hasMore: false });
-  authorizedRequestsHandler()
-    .get(
-      userEndpoint + `?skip=0&limit=${this.limit}&` + stringify(filters)
-    )
-    .then((res) => {
-      console.log(res);
-      if (res.data.length !== 0) {
+  resetFilters = () => {
+    this.setState({
+      filters: {},
+      skip: 0,
+      department: "",
+      role: "",
+      hasMore: false,
+    });
+    authorizedRequestsHandler()
+      .get(userEndpoint + `?skip=0&limit=${this.limit}`)
+      .then((res) => {
         this.setState({
           allUsersList: res.data,
           skip: this.limit,
           hasMore: !(res.data.length < this.limit),
         });
-      } else if (res.data.length === 0) {
-        this.setState({allUsersList: [] });
-      }
-    })
-    .catch((err) => {
-      this.setState({ error: true });
-      const errorCode = err.response.data.errorCode;
-      if (errorCode === "INVALID_TOKEN") {
-        this.props.errorOccurred();
-      }
-      if (err.response.status === 500) {
-        this.setState({ networkErr: true });
-      }
-    });
-};
-
-resetFilters = () => {
-  this.setState({
-    filters: {},
-    skip: 0,
-    department: "",
-    role:"",
-    hasMore: false,
-  });
-  authorizedRequestsHandler()
-    .get(userEndpoint + `?skip=0&limit=${this.limit}`)
-    .then((res) => {
-      this.setState({
-        allUsersList: res.data,
-        skip: this.limit,
-        hasMore: !(res.data.length < this.limit),
+      })
+      .catch((err) => {
+        this.setState({ error: true });
+        const errorCode = err.response.data.errorCode;
+        if (errorCode === "INVALID_TOKEN") {
+          this.props.errorOccurred();
+        }
+        if (err.response.status === 500) {
+          this.setState({ networkErr: true });
+        }
       });
-    })
-    .catch((err) => {
-      this.setState({ error: true });
-      const errorCode = err.response.data.errorCode;
-      if (errorCode === "INVALID_TOKEN") {
-        this.props.errorOccurred();
-      }
-      if (err.response.status === 500) {
-        this.setState({ networkErr: true });
-      }
-    });
-};
+  };
 
-removeSuperAdmin=()=>{
-  let user=this.state.allUsersList;
-  for(let i=0;i<user.length;i++){
-    if(user[i].role==="SuperAdmin"){
-     user.splice(i,1);
-     break;
+  removeSuperAdmin = () => {
+    let user = this.state.allUsersList;
+    for (let i = 0; i < user.length; i++) {
+      if (user[i].role === "SuperAdmin") {
+        user.splice(i, 1);
+        break;
+      }
     }
-}
 
-  return user;
-}
+    return user;
+  };
 
   render() {
     let userData = null;
@@ -188,11 +204,11 @@ removeSuperAdmin=()=>{
       );
     else {
       let user = this.removeSuperAdmin();
-     if(!(this.state.filters.department||this.state.department==="all")){
-        user=user.filter((userData)=>{
-        return !userData.department
-      })
-    }
+      if (!(this.state.filters.department || this.state.department === "all")) {
+        user = user.filter((userData) => {
+          return !userData.department;
+        });
+      }
       userData = user.map((user) => {
         return (
           <tr key={user._id}>
@@ -208,9 +224,9 @@ removeSuperAdmin=()=>{
             <td>
               <div className={dropdownStyles.dropdown}>
                 <Dropdown
-                 defaultvalue={user.role}
+                  defaultvalue={user.role}
                   name="role"
-                  change={(event)=>this.handleChange(event,user.email)}
+                  change={(event) => this.handleChange(event, user.email)}
                   array={this.roleArray}
                 />
               </div>
@@ -219,8 +235,10 @@ removeSuperAdmin=()=>{
               <div className={dropdownStyles.dropdown}>
                 <Dropdown
                   name="department"
-                  defaultvalue={(user.department)?user.department.department:""}
-                  change={(event)=>this.handleChange(event,user.email)}
+                  defaultvalue={
+                    user.department ? user.department.department : ""
+                  }
+                  change={(event) => this.handleChange(event, user.email)}
                   array={this.props.deptArray}
                 />
               </div>
@@ -235,7 +253,12 @@ removeSuperAdmin=()=>{
         {this.state.networkErr
           ? alert("Please check your internet connection")
           : null}
-        <h4>All Users</h4>
+        <h4>
+          All Users{" "}
+          <span className={styles.text}>
+            (Showing users without department by default)
+          </span>
+        </h4>
         <div className={sharedStyles.filterFields}>
           <div className={dropdownStyles.dropdown}>
             <Dropdown
