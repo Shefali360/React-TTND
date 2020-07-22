@@ -14,6 +14,18 @@ class SuperAdmin extends Component {
     networkErr: false,
   };
 
+  errorHandler = (err) => {
+    if (err.response) {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    }
+  };
+
   departmentArray = (department) => {
     let deptArray = [
       { value: "", name: "Department" },
@@ -35,13 +47,7 @@ class SuperAdmin extends Component {
       .catch((err) => {
         console.log(err);
         this.setState({ error: true, spinner: false });
-        // const errorCode = err.response.data.errorCode;
-        // if (errorCode === "INVALID_TOKEN") {
-        //   this.props.errorOccurred();
-        // }
-        // if (err.response.status === 500) {
-        //   this.setState({ networkErr: true });
-        // }
+        this.errorHandler(err);
       });
   };
 

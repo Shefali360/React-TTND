@@ -22,6 +22,17 @@ class Department extends Component {
     spinner:false
   };
 
+  errorHandler = (err) => {
+    if (err.response) {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    }
+  };
 
   componentDidMount(){
     this.props.getDept();
@@ -67,13 +78,7 @@ class Department extends Component {
         });
       })
       .catch((err) => {
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+       this.errorHandler(err);
       });
   };
 
@@ -113,13 +118,7 @@ class Department extends Component {
       .catch((err) => {
         console.log(err);
         this.setState({ spinner: false });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+       this.errorHandler(err);
       });
   };
 
@@ -137,7 +136,7 @@ class Department extends Component {
           editPopupVisible: true,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {  this.errorHandler(err);});
   };
 
   deleteDepartment = () => {
@@ -155,13 +154,7 @@ class Department extends Component {
         this.setState({ deletePopupVisible: false, departmentList: arr,spinner:false });
       })
       .catch((err) => {
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
 
