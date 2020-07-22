@@ -4,7 +4,6 @@ import Users from "./Users/Users";
 import Department from "./Department/Department";
 import { departmentEndpoint } from "../../APIs/APIEndpoints";
 import { authorizedRequestsHandler } from "../../APIs/APIs";
-import styles from "./SuperAdmin.module.css";
 
 class SuperAdmin extends Component {
   state = {

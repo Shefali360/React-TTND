@@ -29,8 +29,7 @@ class AllComplaintsList extends Component {
     complaint: {},
     estimatedTime: {
       count: 0,
-      timeType: "hours",
-      // status: "",
+      timeType: "hours"
     },
     complaintStatus:'',
     department:'',
@@ -51,11 +50,30 @@ class AllComplaintsList extends Component {
   searchArray=[{value:"",name:"Search By"},{value:"issueId",name:"Issue id"},{value:"lockedBy",name:"Locked By"}];
   timeTypeArray=[{value:"hours",name:"hours"},{value:"days",name:"days"},{value:"weeks",name:"weeks"},{value:"months",name:"months"}]
 
+  errorHandler = (err) => {
+    if (err.response) {
+      const errorCode = err.response.data.errorCode;
+      if (errorCode === "INVALID_TOKEN") {
+        this.props.errorOccurred();
+      }
+      if (err.response.status === 500) {
+        this.setState({ networkErr: true });
+      }
+    }
+  };
+
+  complaintEndpoint = (skip, filters) => {
+    return authorizedRequestsHandler().get(
+      assignedComplaintsEndpoint +
+        `?skip=${skip}&limit=${this.limit}&` +
+        stringify(filters)
+    );
+  };
+
   componentDidMount() {
     this.getAssignedComplaintsList();
     this.getDepartment();
    }
-
    departmentArray = (department) => {
     let deptArray = [{ value: "", name: "Select Department" }];
     department.forEach((dept) => {
@@ -73,41 +91,41 @@ class AllComplaintsList extends Component {
       })
       .catch((err) => {
         this.setState({ error: true, spinner: false });
-        const errorCode = err.response.data.errorCode;
-        if (errorCode === "INVALID_TOKEN") {
-          this.props.errorOccurred();
-        }
-        if (err.response.status === 500) {
-          this.setState({ networkErr: true });
-        }
+        this.errorHandler(err);
       });
   };
 
-  getAssignedComplaintsList=()=>{
-   authorizedRequestsHandler()
-    .get(assignedComplaintsEndpoint+`?skip=${this.state.skip}&limit=${this.limit}&`+stringify(this.state.filters))
-    .then((res) => {
-      const assignedComplaintsList = Array.from(this.state.assignedComplaintsList);
-      assignedComplaintsList.push(...res.data);
-      this.setState({
-      assignedComplaintsList:assignedComplaintsList,
-      skip:this.state.skip + 10,
-      hasMore:!(res.data.length<this.limit),
-      spinner:false
-    })
-    })
-    .catch((err) => {
-      console.log(err);
-      this.setState({ error: true,spinner:false });
-      const errorCode=err.response.data.errorCode;
-      if(errorCode==="INVALID_TOKEN"){
-         this.props.errorOccurred();
-      }
-      if(err.response.status===500){
-        this.setState({networkErr:true});
-      }
-    });
-  }
+  fetchComplaints = (skip, filter, filtered) => {
+    this.complaintEndpoint(skip, filter)
+      .then((res) => {
+        let complaintsList = [];
+        if (filtered === 1) {
+          if (res.data.length !== 0) {
+            complaintsList = res.data;
+          } else if (res.data.length === 0) {
+            complaintsList = [];
+          }
+        } else {
+          complaintsList = Array.from(this.state.assignedComplaintsList);
+          complaintsList.push(...res.data);
+        }
+        this.setState({
+          assignedComplaintsList: complaintsList,
+          skip: skip + 10,
+          hasMore: !(res.data.length < this.limit),
+          spinner: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({ error: true, spinner: false });
+        this.errorHandler(err);
+      });
+  };
+
+  getAssignedComplaintsList = () => {
+    this.fetchComplaints(this.state.skip, this.state.filters);
+  };
+
 
   handleEstimatedTimeChange = (event) => {
     const estimatedTime = { ...this.state.estimatedTime };
@@ -136,66 +154,26 @@ class AllComplaintsList extends Component {
     })
   }
 
-  applyFilters=()=>{
-    const filters={};
-    if(this.state.department){
-      filters["department"]=this.state.department;
+  applyFilters = () => {
+    const filters = {};
+    if (this.state.department) {
+      filters["department"] = this.state.department;
     }
-    if(this.state.status){
-      filters["status"]=this.state.status;
+    if (this.state.status) {
+      filters["status"] = this.state.status;
     }
     if(this.state.searchInput){
-    filters["issueId"]=this.state.searchInput.trim().toUpperCase();
-    }
-     this.setState({filters:filters,skip:0,hasMore:false});
-    
-   authorizedRequestsHandler()
-      .get(assignedComplaintsEndpoint+`?skip=0&limit=${this.limit}&`+stringify(filters))
-      .then((res) => {
-        if (res.data.length !== 0) {
-          this.setState({
-          assignedComplaintsList: res.data,
-          skip:this.limit,
-          hasMore:!(res.data.length < this.limit)
-        });
-      }else if (res.data.length === 0) {
-          this.setState({ assignedComplaintsList: []})
-        }
-      })
-      .catch((err) => {
-         this.setState({ error: true });
-         const errorCode=err.response.data.errorCode;
-         if(errorCode==="INVALID_TOKEN"){
-            this.props.errorOccurred();
-         }
-        if(err.response.status===500){
-          this.setState({networkErr:true});
-        }
-      });
-  }
+      filters["issueId"]=this.state.searchInput.trim().toUpperCase();
+      }
+    this.setState({ filters: filters, skip: 0, hasMore: false });
+    this.fetchComplaints(0, filters, 1);
+  };
 
   resetFilters=()=>{
      this.setState({filters:{},department:"",status:"",searchInput:"",search:"",hasMore:false});
-   authorizedRequestsHandler()
-      .get(assignedComplaintsEndpoint+`?skip=0&limit=${this.limit}`)
-      .then((res) => {
-        this.setState({
-          assignedComplaintsList: res.data,
-          skip:this.limit,
-          hasMore:!(res.data.length < this.limit)
-        });
-      })
-      .catch((err) => {
-         this.setState({ error: true });
-         const errorCode=err.response.data.errorCode;
-         if(errorCode==="INVALID_TOKEN"){
-            this.props.errorOccurred();
-         }
-        if(err.response.status===500){
-          this.setState({networkErr:true});
-        }
-      });
+     this.fetchComplaints(0, "", 1);
   }
+  
   submitHandler = (event) => {
     event.preventDefault();
     const formData = {
@@ -223,13 +201,7 @@ class AllComplaintsList extends Component {
         setTimeout(() => {this.setState({formSubmitted: false});}, 1000);
       })
       .catch((err) => {
-        const errorCode=err.response.data.errorCode;
-        if(errorCode==="INVALID_TOKEN"){
-           this.props.errorOccurred();
-        }
-        if(err.response.status===500){
-          this.setState({networkErr:true});
-        }
+        this.errorHandler(err);
       });
   };
 
@@ -269,13 +241,7 @@ class AllComplaintsList extends Component {
           array[index].status=res.data.status;
         })
         .catch((err) => {
-          const errorCode=err.response.data.errorCode;
-          if(errorCode==="INVALID_TOKEN"){
-             this.props.errorOccurred();
-          }
-          if(err.response.status===500){
-            this.setState({networkErr:true});
-          }
+         this.errorHandler(err);
         });
   };
 }

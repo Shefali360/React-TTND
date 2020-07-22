@@ -354,7 +354,6 @@ class UserComplaintList extends Component {
     else {
       let count = this.state.complaintsList;
       tableData = count.map((complaint) => {
-        // console.log(complaint);
         return (
           <tr key={complaint._id}>
             <td>{complaint.department?complaint.department.department:"Not Available"}</td>

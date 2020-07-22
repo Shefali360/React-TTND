@@ -34,7 +34,7 @@ const ComplaintPopup = (props) => {
           </p>
           <div className={styles.column2}>
             <p className={styles.text}>
-              Department:{complaint.department.department}
+              Department:{complaint.department?complaint.department.department:"Not available"}
             </p>
             <p className={styles.text}>Issue Title:{complaint.issue}</p>
           </div>
