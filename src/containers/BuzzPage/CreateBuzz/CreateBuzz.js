@@ -20,6 +20,8 @@ class CreateBuzz extends Component {
     descEmpty: false,
     categoryEmpty: false,
     networkErr: false,
+    imageExceeded:false,
+    sizeExceeded:false
   };
   counter = 0;
   array = [
@@ -41,7 +43,29 @@ class CreateBuzz extends Component {
 }
 
   fileChange = (event) => {
-    this.setState({ images: event.target.files });
+    this.setState({ images: event.target.files },()=>{
+      if(this.state.images.length<5){
+        this.setState({
+          imageExceeded:false
+        })
+      }
+      if(this.state.images.length>5){
+        this.setState({
+          imageExceeded:true
+        })
+      }
+      for(let i=0;i<this.state.images.length;i++){
+        if(this.state.images[i].size<1048576){
+          this.setState({
+            sizeExceeded:false
+          })
+        }else{
+          this.setState({
+          sizeExceeded:true
+          })
+        }
+        }
+    });
   };
 
   handleChange = (event) => {
@@ -102,6 +126,7 @@ class CreateBuzz extends Component {
       });
   };
   render() {
+   
     return (
       <div className={styles.createBuzz}>
         {this.state.networkErr
@@ -142,6 +167,16 @@ class CreateBuzz extends Component {
                 </div>
               </div>
             </div>
+            {this.state.imageExceeded ? (
+                <p className={styles.errormsg}>
+                  Only 5 images can be uploaded at once
+                </p>
+              ) : null}
+               {this.state.sizeExceeded ? (
+                <p className={styles.errormsg}>
+                 Image file size exceeded.
+                </p>
+              ) : null}
             <div className={styles.bottombarRight}>
               <div className={styles.submitted}>
                 {this.state.formSubmitted ? (

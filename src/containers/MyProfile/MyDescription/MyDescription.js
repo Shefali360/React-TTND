@@ -90,16 +90,16 @@ class MyDescription extends Component {
 
   uploadPicture = () => {
     let formData = new FormData();
+    console.log(this.state.picture);
     if (this.state.picture) {
       formData.append(
         "picture",
         this.state.picture[0],
         this.state.picture[0]["name"]
       );
+      this.setState({ spinner: true });
+      formData&&this.updateDesc(updateProfilePictureEndpoint, formData);
     }
-   
-    this.setState({ spinner: true });
-    formData&&this.updateDesc(updateProfilePictureEndpoint, formData);
   };
 
   render() {

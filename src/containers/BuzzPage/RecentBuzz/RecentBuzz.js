@@ -35,6 +35,8 @@ class RecentBuzzData extends Component {
     submitDisabled: true,
     editClicked: false,
     deletePopupVisible: false,
+    imageExceeded:false,
+    sizeExceeded:false
   };
 
   limit = 5;
@@ -141,7 +143,29 @@ class RecentBuzzData extends Component {
   };
 
   fileChange = (event) => {
-    this.setState({ images: event.target.files });
+    this.setState({ images: event.target.files },()=>{
+      if(this.state.images.length<5){
+        this.setState({
+          imageExceeded:false
+        })
+      }
+      if(this.state.images.length>5){
+        this.setState({
+          imageExceeded:true
+        })
+      }
+      for(let i=0;i<this.state.images.length;i++){
+        if(this.state.images[i].size<1048576){
+          this.setState({
+            sizeExceeded:false
+          })
+        }else{
+          this.setState({
+          sizeExceeded:true
+          })
+        }
+        }
+    });
   };
 
   handleChange = (event) => {
@@ -396,6 +420,8 @@ class RecentBuzzData extends Component {
             spinner={this.state.spinner}
             submitDisabled={this.state.submitDisabled}
             images={this.state.images}
+            imageExceeded={this.state.imageExceeded}
+            sizeExceeded={this.state.sizeExceeded}
             change={this.handleChange}
             fileChange={this.fileChange}
             closePopup={this.closePopup}

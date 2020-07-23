@@ -53,6 +53,16 @@ const EditBuzz = (props) => {
                 </div>
               </div>
             </div>
+            {props.imageExceeded ? (
+                <p className={styles.errormsg}>
+                  Only 5 images can be uploaded at once
+                </p>
+              ) : null}
+               {props.sizeExceeded ? (
+                <p className={styles.errormsg}>
+                 Image file size exceeded.
+                </p>
+              ) : null}
             <div className={buzzStyles.bottombarRight}>
               {props.descEmpty ? (
                 <p className={buzzStyles.errormsg}>

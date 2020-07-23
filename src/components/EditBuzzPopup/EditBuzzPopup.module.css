@@ -18,6 +18,15 @@
     color:#D8763A;
 }
 
+.errormsg{
+    color:#e04a32;
+    font-size:14px;
+    font-weight: bold;
+    margin-top:5px;
+    margin-right:10px;
+}
+
+
 .cross{
     position: absolute;
     right:0;
