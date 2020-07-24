@@ -350,7 +350,7 @@ class RecentBuzzData extends Component {
           {this.props.heading}
         </h4>
         <div className={styles.filterBar}>
-          <div className={sharedStyles.search}>
+          {/* <div className={sharedStyles.search}>
             <input
               type="text"
               placeholder="Search any user.."
@@ -358,7 +358,7 @@ class RecentBuzzData extends Component {
               // value={this.state.searchInput}
               // onChange={this.handleFilterChange}
             />
-          </div>
+          </div> */}
           {!this.props.filters ? (
             <div>
               <div className={dropdownStyles.dropdown}>

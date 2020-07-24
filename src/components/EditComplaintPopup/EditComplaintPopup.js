@@ -77,6 +77,11 @@ const EditComplaintPopup = (props) => {
                 Please fill in all the fields.
               </p>
             ) : null}
+             {props.sizeExceeded ? (
+                <p className={styles.errormsg}>
+                 Image file size exceeded.
+                </p>
+              ) : null}
             <button
               className={sharedStyles.button}
               type="submit"

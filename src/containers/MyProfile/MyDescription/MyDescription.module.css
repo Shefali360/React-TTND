@@ -66,7 +66,7 @@
     display: flex;
     justify-content: space-evenly;
     position: relative;
-    height:250px;
+    min-height:250px;
     position: relative;
     align-items: center;
    
@@ -79,3 +79,28 @@
     border-radius:50%;
 }
 
+
+
+ @media (min-width:768px) and (max-width:1023px){
+    .profile li{
+        font-size:20px;
+        
+    }
+}
+
+
+
+@media(max-width:767px){
+    .descBox{
+        display: block;
+    }
+
+    .picture{
+        text-align: center;
+        margin:30px 0;
+    }
+    .description{
+        text-align: center;
+    }
+   
+}

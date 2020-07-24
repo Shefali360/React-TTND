@@ -9,7 +9,7 @@
 .filterBar{
     background-color: #fff;
     border-bottom:2px solid #ccc;
-    padding:7px 50px;
+    /* padding:7px 50px; */
     display:flex;
     justify-content: space-between;
 }
