@@ -22,6 +22,7 @@ class ComplaintBox extends Component {
     concernEmpty: false,
     networkErr: false,
     redirect: false,
+    sizeExceeded:false
   };
   counter = 0;
   limit = 5;
@@ -45,7 +46,19 @@ class ComplaintBox extends Component {
 }
 
   fileChange = (event) => {
-    this.setState({ files: event.target.files });
+    this.setState({ files: event.target.files },()=>{
+      for(let i=0;i<this.state.files.length;i++){
+        if(this.state.files[i].size<5*1048576){
+          this.setState({
+            sizeExceeded:false
+          })
+        }else{
+          this.setState({
+          sizeExceeded:true
+          })
+        }
+        }
+    });
   };
 
   handleChange = (event) => {
@@ -198,6 +211,11 @@ class ComplaintBox extends Component {
             this.state.concernEmpty ? (
               <p className={styles.errormsg}>Please fill in all the fields.</p>
             ) : null}
+             {this.state.sizeExceeded ? (
+                <p className={styles.errormsg}>
+                 Image file size exceeded.
+                </p>
+              ) : null}
             <button
               className={styles.button}
               type="submit"

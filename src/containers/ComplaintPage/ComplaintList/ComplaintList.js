@@ -45,7 +45,8 @@ class UserComplaintList extends Component {
     userData: {},
     deletePopupVisible: false,
     deletionId: null,
-    smallspinner:false
+    smallspinner:false,
+    sizeExceeded:false
   };
   limit = 10;
   statusArray = [
@@ -193,7 +194,19 @@ class UserComplaintList extends Component {
   };
 
   fileChange = (event) => {
-    this.setState({ files: event.target.files });
+    this.setState({ files: event.target.files },()=>{
+      for(let i=0;i<this.state.files.length;i++){
+        if(this.state.files[i].size<5*1048576){
+          this.setState({
+            sizeExceeded:false
+          })
+        }else{
+          this.setState({
+          sizeExceeded:true
+          })
+        }
+        }
+    });
   };
 
   submitHandler = (event) => {
@@ -502,6 +515,7 @@ class UserComplaintList extends Component {
             deptArray={this.props.deptArray}
             fileChange={this.fileChange}
             closePopup={this.closeFormPopup}
+            sizeExceeded={this.state.sizeExceeded}
             departmentEmpty={this.state.departmentEmpty}
             issueEmpty={this.state.issueEmpty}
             concernEmpty={this.state.concernEmpty}
