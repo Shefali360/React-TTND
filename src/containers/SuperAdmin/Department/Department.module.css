@@ -1,76 +1,221 @@
-.box{
+.box {
     /* width:25%; */
     /* margin-left:25px; */
     background-color: #fff;
     position: relative;
 }
 
-.icon{
+.icon {
     position: absolute;
-    top:10px;
-    right:10px;
+    top: 10px;
+    right: 10px;
     font-weight: bold;
-    color:#D8763A;
+    color: #D8763A;
     cursor: pointer;
 }
 
-.display{
-    display:none;
+.display {
+    display: none;
 }
 
 .overlay {
     position: absolute;
-    top:0;
+    top: 0;
     width: 100%;
-    height: 100%; 
-    background-color: rgba(0,0,0,0.3);  
-    z-index:5;
-  }
-  .popup{
-    border:2px solid #D8763A;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 5;
+}
+
+.popup {
+    border: 2px solid #D8763A;
     border-radius: 5px;
-    padding:5px;
+    padding: 5px;
     position: absolute;
-    top:50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background-color: #fff;
 }
 
-.popup h5{
-    margin:15px 0;
+.popup h5 {
+    margin: 15px 0;
 }
 
-.popup form input{
-    width:130px;
-    height:25px;
-    border:1px solid #ccc;
-    border-radius:4px;
-    outline:0;
-    padding-left:5px;
+.popup form input {
+    width: 130px;
+    height: 25px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: 0;
+    padding-left: 5px;
 }
-.popup button{
-    margin-top:10px;
-    padding:5px;
-    border:none;
+
+.popup button {
+    margin-top: 10px;
+    padding: 5px;
+    border: none;
     background-color: #D8763A;
-    color:#fff;
-    border-radius:4px;
+    color: #fff;
+    border-radius: 4px;
     cursor: pointer;
 }
 
-.popup button:disabled{
+.popup button:disabled {
     cursor: not-allowed;
-    background-color:#aaa;
+    background-color: #aaa;
 }
 
-.edit{
-    font-weight:bold;
-    color:#1a73e8;
+.edit {
+    font-weight: bold;
+    color: #1a73e8;
     cursor: pointer;
 }
 
-.delete{
-    color:#e04a32;
+.delete {
+    color: #e04a32;
     cursor: pointer;
+}
+
+.tableList {
+    width: 100%;
+    background-color: #ffffff;
+    border-collapse: collapse;
+    border-style: hidden;
+    table-layout: fixed;
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+
+.tableList::-webkit-scrollbar {
+    width: 3px;
+    background: #dfe1e8;
+}
+
+.tableList::-webkit-scrollbar-thumb {
+    background: #7a7d89;
+
+}
+
+
+.tableList tbody {
+    display: table;
+}
+
+.tableList thead,
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.tableList thead {
+    border-top: 0;
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+}
+
+.tableList th {
+    color: gray;
+    border: 1px solid #ccc;
+}
+
+.tableList td {
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.tableList th,
+td {
+    padding: 10px;
+}
+
+.tableList tr:nth-child(even) {
+    background: #eee;
+}
+
+.tableList td:last-child{
+    display: none;
+}
+
+@media(max-width:767px) {
+    .tableList {
+        background-color: #fff;
+        min-height: 400px;
+    }
+
+    .tableList thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .tableList tr {
+        border: 1px solid #ccc;
+        margin-top: 1rem;
+        background-color: #f2f2f2;
+    }
+
+    .tableList tr:last-child {
+        border: none;
+    }
+
+    .tableList td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        min-height: 40px;
+        line-height: 40px;
+        max-height: 50px;
+    }
+
+    .tableList td:before {
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+
+    .tableList td:nth-of-type(1):before {
+        content: "Department";
+    }
+
+    .editC {
+        background-color: #2ec020;
+        border: none;
+        border-radius: 3px;
+        color: #fff;
+        font-weight: bold;
+        width: 50px;
+        height: 30px;
+        margin-right: 20px;
+    }
+
+    .deleteC {
+        background-color: #e04a32;
+        border: none;
+        border-radius: 3px;
+        color: #fff;
+        font-weight: bold;
+        width: 50px;
+        height: 30px;
+    }
+
+    .tableList td:nth-child(2) {
+        display: none;
+    }
+
+    .tableList td:nth-child(3) {
+        display: none;
+    }
+    .tableList td:last-child{
+        display: flex;
+    }
 }

@@ -346,7 +346,7 @@ class AllComplaintsList extends Component {
           <button className={styles.reset}onClick={this.resetFilters}>Reset Filters</button>
         </div>
         </div>
-        <table className={styles.table}>
+        <table className={styles.tableList}>
           <thead>
             <tr>
               <th>Department</th>

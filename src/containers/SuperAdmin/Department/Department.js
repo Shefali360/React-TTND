@@ -205,7 +205,16 @@ class Department extends Component {
                 title="Delete Department"
               ></i>
             </td>
+            <td>
+            <button className={styles.editC} onClick={() => this.editDepartment(dept._id)}>
+              Edit
+            </button>
+            <button className={styles.deleteC} onClick={() => this.showDeletePopup(dept._id)}>
+              Delete 
+            </button>
+            </td>
           </tr>
+
         );
       });
     }
@@ -221,8 +230,8 @@ class Department extends Component {
           onClick={this.openPopup}
           title="Add Department"
         ></i>
-        <div className={complaintStyles.tableContainer}>
-          <table>
+        <div>
+          <table className={styles.tableList}>
             <thead>
               <tr>
                 <th>Department</th>

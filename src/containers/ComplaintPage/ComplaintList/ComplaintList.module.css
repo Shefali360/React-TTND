@@ -13,7 +13,7 @@
     border-bottom: 2px solid #ccc;
 }
 
-.complaintsList table{
+ .tableList{
     width:100%;
     background-color: #ffffff;   
     border-collapse: collapse;
@@ -25,26 +25,26 @@
     display: block;
 }
 
-.complaintsList table::-webkit-scrollbar {
+ .tableList::-webkit-scrollbar {
     width: 3px;
     background: #dfe1e8;
 }
 
-.complaintsList table::-webkit-scrollbar-thumb {
+ .tableList::-webkit-scrollbar-thumb {
     background: #7a7d89;
 
 }
-.complaintsList tbody {
+.tableList tbody {
     display: table; 
 }
 
-.complaintsList thead, tbody tr {
+.tableList thead, tbody tr {
     display: table;
     width: 100%;
     table-layout: fixed;
 }
 
-.complaintsList thead {
+.tableList thead {
     border-top: 0;
     position: sticky;
     z-index:1;
@@ -56,7 +56,7 @@
 .deletePopup{
     width:40%;
 }
-.complaintsList tr:nth-child(even) { background: #eee; }
+.tableList tr:nth-child(even) { background: #eee; }
 
 .search{
     width:200px;
@@ -74,24 +74,24 @@
     color:#2ec020;
 }
 
-td:last-child{
-    font-weight:bold;
-}
-.complaintsList th{
+.tableList th{
     color:gray;
     border:1px solid #ccc;
 }
 
-.complaintsList td{
+.tableList td{
     text-align: center;
     border:1px solid #ccc;
 }
 
-.complaintsList td:last-child{
+.tableList td:nth-child(5){
     display: flex;
     justify-content: space-evenly;
 }
-.complaintsList th,td{
+.tableList td:last-child{
+    display:none;
+}
+.tableList th,td{
     padding:10px;
 }
 
@@ -129,5 +129,90 @@ td:last-child{
 @media (min-width:768px) and (max-width:1023px){
     .complaintsList table{
        max-height: 390px;
+    }
+}
+
+@media(max-width:767px){
+    .tableList {
+        background-color: #fff;
+        min-height:400px;
+    }
+    .tableList thead, tbody, th, td, tr {
+        display: block;
+    }
+    .tableList thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    .tableList tr {
+        border: 1px solid #ccc;
+        margin-top: 1rem;
+        background-color: #f2f2f2;
+    }
+    .tableList tr:last-child {
+        border: none;
+      
+    }
+    .tableList td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        min-height: 40px;
+        line-height: 40px;
+        max-height: 50px;
+    }
+    .tableList td:before {
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+    .tableList td:nth-of-type(1):before {
+        content: "Department";
+    }
+    .tableList td:nth-of-type(2):before {
+        content: "Issue Id";
+    }
+    .tableList td:nth-of-type(3):before {
+        content: "Assigned To";
+    }
+    .tableList td:nth-of-type(4):before {
+        content: "Status";
+    }
+    .tableList td:nth-child(5){
+        display:none;
+    }
+     td:last-child{
+        display: flex;
+    } 
+    .search input{
+        height:30px;
+    }
+
+    .editC{
+        background-color:#2ec020;
+        border:none;
+        border-radius: 3px;
+        color:#fff;
+        font-weight: bold;
+        width:50px;
+        height:30px;
+        margin-right:20px;
+    }
+
+    .deleteC{
+        background-color:#e04a32;
+        border:none;
+        border-radius: 3px;
+        color:#fff;
+        font-weight: bold;
+        width:50px;
+        height:30px;
+    }
+    .tableList td:last-child{
+        display:flex;
     }
 }

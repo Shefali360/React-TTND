@@ -315,8 +315,8 @@ class Complaints extends Component {
             </button>
           </div>
         </div>
-        <div className={complaintStyles.tableContainer}>
-          <table>
+        <div>
+          <table className={styles.tableList}>
             <thead>
               <tr>
                 <th>Department</th>

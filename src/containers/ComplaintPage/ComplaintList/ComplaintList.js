@@ -404,6 +404,14 @@ class UserComplaintList extends Component {
                 onClick={() => this.showDeletePopup(complaint._id)}
               ></i>
             </td>
+            <td>
+            <button className={styles.editC} onClick={() => this.editComplaint(complaint._id)}>
+              Edit
+            </button>
+            <button className={styles.deleteC} onClick={() => this.showDeletePopup(complaint._id)}>
+              Delete 
+            </button>
+            </td>
           </tr>
         );
       });
@@ -461,7 +469,7 @@ class UserComplaintList extends Component {
           </div>
         </div>
         <div className={styles.tableContainer}>
-          <table>
+          <table className={styles.tableList}>
             <thead>
               <tr>
                 <th>Department</th>
@@ -489,6 +497,7 @@ class UserComplaintList extends Component {
               {tableData || []}
             </InfiniteScroll>
           </table>
+       
         </div>
         {this.state.popupVisible ? (
           <ComplaintPopup

@@ -2,14 +2,6 @@
     position: relative;
 }
 
-.table{
-    position: relative;
-}
-.table td:nth-child(2){
-    color:#1a73e8;
-    text-decoration: underline;
-    cursor: pointer;
-} 
 
 .filterFields{
     display: flex;
@@ -38,6 +30,7 @@
     cursor:pointer;
 }
 
+
 .undo:hover{
     color:#fff;
     background-color:#1a73e8;
@@ -53,7 +46,7 @@
 
 .search input{
     height:100%;
-    width:100px;
+    width:95%;
     padding-left:10px;
     outline:0;
     border:0px;
@@ -134,6 +127,17 @@
     color:#D8763A;
 }
 
+.issueId{
+    background-color: transparent;
+    border:none;
+    color:#1a73e8;
+    text-decoration: underline;
+    cursor:pointer;
+    font-size:16px;
+    outline:0;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
 .overlay {
     position: absolute;
     top:0;
@@ -142,6 +146,60 @@
     background-color: rgba(0,0,0,0.3);  
     z-index:5;
   }
+
+  .tableList{
+    width:100%;
+    background-color: #ffffff;   
+    border-collapse: collapse;
+    border-style: hidden;
+    table-layout:fixed;
+    max-height:420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+
+ .tableList::-webkit-scrollbar {
+    width: 3px;
+    background: #dfe1e8;
+}
+
+ .tableList::-webkit-scrollbar-thumb {
+    background: #7a7d89;
+
+}
+.tableList tbody {
+    display: table; 
+}
+
+.tableList thead, tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.tableList thead {
+    border-top: 0;
+    position: sticky;
+    z-index:1;
+    top:0;
+    left:0;
+    background-color: #fff;
+}
+.tableList tr:nth-child(even) { background: #eee; }
+
+.tableList th{
+    color:gray;
+    border:1px solid #ccc;
+}
+
+.tableList td{
+    text-align: center;
+    border:1px solid #ccc;
+}
+.tableList th,td{
+    padding:10px;
+}
 
 .display{
     display: none;
@@ -191,9 +249,6 @@
     display: none;
 }
 
-.issueId{
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-}
 
 .errormsg{
     color:#e04a32;
@@ -230,9 +285,6 @@
         width: 90%;
         margin:0 auto;
     }
-    .search input{
-        height:40px;
-    }
 
     .check{
         display: none;
@@ -268,27 +320,28 @@
         font-weight: bold;
         outline: 0;
     }
-    .table {
+    .tableList {
         background-color: #fff;
         min-height:400px;
     }
-    .table, thead, tbody, th, td, tr {
+    .tableList thead, tbody, th, td, tr {
         display: block;
     }
-    thead tr {
+    .tableList thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
-    tr {
+    .tableList tr {
         border: 1px solid #ccc;
         margin-top: 1rem;
         background-color: #f2f2f2;
     }
-    tr:last-child {
+    .tableList tr:last-child {
         border: none;
+      
     }
-    td {
+    .tableList td {
         border: none;
         border-bottom: 1px solid #eee;
         position: relative;
@@ -297,27 +350,27 @@
         line-height: 40px;
         max-height: 50px;
     }
-    td:before {
+    .tableList td:before {
         position: absolute;
         left: 6px;
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
     }
-    td:nth-of-type(1):before {
+    .tableList td:nth-of-type(1):before {
         content: "Department";
     }
-    td:nth-of-type(2):before {
+    .tableList td:nth-of-type(2):before {
         content: "Issue Id";
     }
-    td:nth-of-type(3):before {
+    .tableList td:nth-of-type(3):before {
         content: "Locked By";
     }
-    td:nth-of-type(4):before {
-        content: "Assigned to";
-    }
-    td:nth-of-type(5):before {
+    .tableList td:nth-of-type(4):before {
         content: "Status";
+    }
+    .tableList td:nth-child(5){
+        display:none;
     }
 
 }

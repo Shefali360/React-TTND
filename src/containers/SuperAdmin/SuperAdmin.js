@@ -4,6 +4,8 @@ import Users from "./Users/Users";
 import Department from "./Department/Department";
 import { departmentEndpoint } from "../../APIs/APIEndpoints";
 import { authorizedRequestsHandler } from "../../APIs/APIs";
+import {connect} from "react-redux";
+import { errorOccurred } from "../../store/actions";
 
 class SuperAdmin extends Component {
   state = {
@@ -66,4 +68,10 @@ class SuperAdmin extends Component {
   }
 }
 
-export default SuperAdmin;
+const mapDispatchToProps=(dispatch)=>{
+  return{
+    errorOccurred:()=>dispatch(errorOccurred())
+  }
+  }
+
+export default connect(null,mapDispatchToProps)(SuperAdmin);

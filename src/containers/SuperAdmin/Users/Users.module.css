@@ -7,3 +7,111 @@
 .text{
     font-size:12px;
 }
+.tableList{
+    width:100%;
+    background-color: #ffffff;   
+    border-collapse: collapse;
+    border-style: hidden;
+    table-layout:fixed;
+    max-height:420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+
+ .tableList::-webkit-scrollbar {
+    width: 3px;
+    background: #dfe1e8;
+}
+
+ .tableList::-webkit-scrollbar-thumb {
+    background: #7a7d89;
+
+}
+.tableList tbody {
+    display: table; 
+}
+
+.tableList thead, tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.tableList thead {
+    border-top: 0;
+    position: sticky;
+    z-index:1;
+    top:0;
+    left:0;
+    background-color: #fff;
+}
+.tableList th{
+    color:gray;
+    border:1px solid #ccc;
+}
+
+.tableList td{
+    text-align: center;
+    border:1px solid #ccc;
+}
+
+.tableList th,td{
+    padding:10px;
+}
+
+.tableList tr:nth-child(even) { background: #eee; }
+
+
+@media(max-width:767px){
+    .tableList {
+        background-color: #fff;
+        min-height:400px;
+    }
+    .tableList thead, tbody, th, td, tr {
+        display: block;
+    }
+    .tableList thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    .tableList tr {
+        border: 1px solid #ccc;
+        margin-top: 1rem;
+        background-color: #f2f2f2;
+    }
+    .tableList tr:last-child {
+        border: none;
+      
+    }
+    .tableList td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        min-height: 40px;
+        line-height: 40px;
+        max-height: 50px;
+    }
+    .tableList td:before {
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+    .tableList td:nth-of-type(1):before {
+        content: "User Mail";
+    }
+    .tableList td:nth-of-type(2):before {
+        content: "Username";
+    }
+    .tableList td:nth-of-type(3):before {
+        content: "Role";
+    }
+    .tableList td:nth-of-type(4):before {
+        content: "Department";
+    }
+   
+}
