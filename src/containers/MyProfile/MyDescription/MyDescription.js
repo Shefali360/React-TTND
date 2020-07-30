@@ -9,6 +9,7 @@ import {
 import EditProfile from "../../../components/EditProfilePopup/EditProfilePopup";
 import Spinner from "../../../components/Spinner/Spinner";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
+import {followUserEndpoint,unfollowUserEndpoint} from "../../../APIs/APIEndpoints";
 import { getUserData } from "../../../store/actions/index";
 import { connect } from "react-redux";
 import buzzStyles from "../../BuzzPage/CreateBuzz/CreateBuzz.module.css";
@@ -102,6 +103,28 @@ class MyDescription extends Component {
     }
   };
 
+  followUser=()=>{
+    authorizedRequestsHandler()
+    .patch(followUserEndpoint+ `/${this.props.email}`,null)
+    .then((res)=>{
+      console.log(res)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+  };
+
+  unfollowUser=()=>{
+    authorizedRequestsHandler()
+    .patch(unfollowUserEndpoint+ `/${this.props.email}`,null)
+    .then((res)=>{
+      console.log(res)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+  };
+
   render() {
     let description = null;
     if (this.props.spinner) {
@@ -181,6 +204,8 @@ class MyDescription extends Component {
                 </li>
               ) : null}
             </ul>
+           {(this.props.email!==this.props.user.email)? <button className={styles.follow} onClick={this.followUser}>Follow</button>:null}
+          { (this.props.email!==this.props.user.email)?<button  className={styles.unfollow} onClick={this.unfollowUser}>Unfollow</button>:null}
           </div>
           {this.state.popupVisible ? (
             <EditProfile

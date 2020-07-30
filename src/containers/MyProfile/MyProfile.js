@@ -5,6 +5,7 @@ import { authorizedRequestsHandler } from "../../APIs/APIs";
 import { userEndpoint } from "../../APIs/APIEndpoints";
 import { connect } from "react-redux";
 import { stringify } from "querystring";
+import { getUserData } from "../../store/actions/index";
 
 class MyProfile extends Component {
   state = {
@@ -71,4 +72,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(MyProfile);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getUserData: () => dispatch(getUserData()),
+  };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(MyProfile);
