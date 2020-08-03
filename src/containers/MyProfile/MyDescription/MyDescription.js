@@ -8,12 +8,16 @@ import {
 } from "../../../APIs/APIEndpoints";
 import EditProfile from "../../../components/EditProfilePopup/EditProfilePopup";
 import Spinner from "../../../components/Spinner/Spinner";
+import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
-import {followUserEndpoint,unfollowUserEndpoint} from "../../../APIs/APIEndpoints";
+import {
+  userEndpoint,
+  followOrUnfollowUserEndpoint
+} from "../../../APIs/APIEndpoints";
 import { getUserData } from "../../../store/actions/index";
 import { connect } from "react-redux";
 import buzzStyles from "../../BuzzPage/CreateBuzz/CreateBuzz.module.css";
-import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
+import { stringify } from "querystring";
 
 class MyDescription extends Component {
   state = {
@@ -22,8 +26,36 @@ class MyDescription extends Component {
     dob: "",
     phone: "",
     picture: "",
+    followed:[],
+    followedArr:[],
+    followText: "Follow",
+    follow: 0,
+    updateAction: false,
+    followedCount:0
   };
 
+  followedCounting=async()=>{
+    const filter = {};
+    filter["email"] = this.props.user.email;
+    await authorizedRequestsHandler()
+      .get(userEndpoint + `?skip=0&limit=1&` + stringify(filter))
+      .then((res) => {
+        this.setState({
+          // userId: res.data[0],
+          followedArr:res.data[0].followed
+        });
+      })
+      .catch((err) => {
+        this.errorHandler(err);
+      });
+      console.log(this.state.followedArr);
+    this.setState({followedCount:this.state.followedArr.length})
+  }
+
+
+  componentDidMount=()=>{
+    this.followedCounting();
+  }
   errorHandler = (err) => {
     if (err.response) {
       const errorCode = err.response.data.errorCode;
@@ -48,8 +80,10 @@ class MyDescription extends Component {
         localStorage.setItem("token", JSON.stringify(token));
         this.props.getUserData();
         this.props.getUser();
-        if(profile === 1){this.setState({ popupVisible: false })};
-        this.setState({spinner:false})
+        if (profile === 1) {
+          this.setState({ popupVisible: false });
+        }
+        this.setState({ spinner: false });
       })
       .catch((err) => {
         console.log(err);
@@ -99,30 +133,59 @@ class MyDescription extends Component {
         this.state.picture[0]["name"]
       );
       this.setState({ spinner: true });
-      formData&&this.updateDesc(updateProfilePictureEndpoint, formData);
+      formData && this.updateDesc(updateProfilePictureEndpoint, formData);
     }
   };
 
-  followUser=()=>{
-    authorizedRequestsHandler()
-    .patch(followUserEndpoint+ `/${this.props.email}`,null)
-    .then((res)=>{
-      console.log(res)
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-  };
-
-  unfollowUser=()=>{
-    authorizedRequestsHandler()
-    .patch(unfollowUserEndpoint+ `/${this.props.email}`,null)
-    .then((res)=>{
-      console.log(res)
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
+  followOrUnfollowUser = async () => {
+    this.setState({ updateAction: true });
+    const filter = {};
+    filter["email"] = this.props.user.email;
+    await authorizedRequestsHandler()
+      .get(userEndpoint + `?skip=0&limit=1&` + stringify(filter))
+      .then((res) => {
+        this.setState({
+          // userId: res.data[0],
+          followed:res.data[0].followed
+        });
+      })
+      .catch((err) => {
+        this.errorHandler(err);
+      });
+    const arr = this.state.followed.filter(
+      (name) => name === this.props.name
+    );
+    if (arr.length === 1) {
+      this.setState({ follow: 1, followText: "Unfollow" });
+    }
+    if (this.state.follow === 0) {
+      authorizedRequestsHandler()
+        .patch(followOrUnfollowUserEndpoint + `/${this.props.name}`, null)
+        .then((res) => {
+          console.log(res);
+          this.setState({
+            follow: 1,
+            followText: "Unfollow",
+            updateAction: false,
+          });
+        })
+        .catch((err) => {
+          this.errorHandler(err);
+        });
+    } else if (this.state.follow === 1) {
+      authorizedRequestsHandler()
+        .patch(followOrUnfollowUserEndpoint + `/${this.props.name}?reverse=1`, null)
+        .then((res) => {
+          this.setState({
+            follow: 0,
+            followText: "Follow",
+            updateAction: false,
+          });
+        })
+        .catch((err) => {
+          this.errorHandler(err);
+        });
+    }
   };
 
   render() {
@@ -175,7 +238,7 @@ class MyDescription extends Component {
                 title="Upload Profile Picture"
               />
             ) : null}
-            {(this.state.spinner)?<SmallSpinner/>:null}
+            {this.state.spinner ? <SmallSpinner /> : null}
           </div>
           <div className={styles.description}>
             <h2>{this.props.name}</h2>
@@ -204,8 +267,19 @@ class MyDescription extends Component {
                 </li>
               ) : null}
             </ul>
-           {(this.props.email!==this.props.user.email)? <button className={styles.follow} onClick={this.followUser}>Follow</button>:null}
-          { (this.props.email!==this.props.user.email)?<button  className={styles.unfollow} onClick={this.unfollowUser}>Unfollow</button>:null}
+            {this.props.email !== this.props.user.email ? (
+              <button
+                className={
+                  styles.follow +
+                  " " +
+                  (this.state.updateAction ? styles.disableClick : null)
+                }
+                onClick={this.followOrUnfollowUser}
+              >
+                {this.state.followText}
+              </button>
+            ) : <button className={styles.following+" "+styles.follow}>Following ({this.state.followedCount})</button>}
+            {this.state.updateAction ? <SmallSpinner /> : null}
           </div>
           {this.state.popupVisible ? (
             <EditProfile
