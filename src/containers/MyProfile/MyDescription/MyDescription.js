@@ -12,9 +12,10 @@ import SmallSpinner from "../../../components/SmallSpinner/SmallSpinner";
 import { authorizedRequestsHandler } from "../../../APIs/APIs";
 import {
   userEndpoint,
-  followOrUnfollowUserEndpoint
+  followOrUnfollowUserEndpoint,
 } from "../../../APIs/APIEndpoints";
-import { getUserData } from "../../../store/actions/index";
+import { Link } from "react-router-dom";
+import { getUserData, errorOccurred } from "../../../store/actions/index";
 import { connect } from "react-redux";
 import buzzStyles from "../../BuzzPage/CreateBuzz/CreateBuzz.module.css";
 import { stringify } from "querystring";
@@ -26,15 +27,17 @@ class MyDescription extends Component {
     dob: "",
     phone: "",
     picture: "",
-    followed:[],
-    followedArr:[],
+    followed: [],
+    followedArr: [],
     followText: "Follow",
     follow: 0,
     updateAction: false,
-    followedCount:0
+    followedCount: 0,
+    listDisplay: false,
+    namearray:[]
   };
 
-  followedCounting=async()=>{
+  followedCounting = async () => {
     const filter = {};
     filter["email"] = this.props.user.email;
     await authorizedRequestsHandler()
@@ -42,20 +45,35 @@ class MyDescription extends Component {
       .then((res) => {
         this.setState({
           // userId: res.data[0],
-          followedArr:res.data[0].followed
+          followedArr: res.data[0].followed,
         });
       })
       .catch((err) => {
         this.errorHandler(err);
       });
-      console.log(this.state.followedArr);
-    this.setState({followedCount:this.state.followedArr.length})
-  }
+      let namearray=[];
+      for(let array=0;array<this.state.followedArr.length;array++){
+      const filtered = {};
+      filtered["email"] = this.state.followedArr[array];
+      await authorizedRequestsHandler()
+      .get(userEndpoint + `?skip=0&limit=1&` + stringify(filtered))
+      .then((res) => {
+        const name=res.data[0].name;
+        namearray.push(name);
+        this.setState({
+         namearray:namearray
+        });
+      })
+      .catch((err) => {
+        this.errorHandler(err);
+      });
+    }
+    this.setState({ followedCount: this.state.followedArr.length });
+  };
 
-
-  componentDidMount=()=>{
+  componentDidMount = () => {
     this.followedCounting();
-  }
+  };
   errorHandler = (err) => {
     if (err.response) {
       const errorCode = err.response.data.errorCode;
@@ -146,21 +164,20 @@ class MyDescription extends Component {
       .then((res) => {
         this.setState({
           // userId: res.data[0],
-          followed:res.data[0].followed
+          followed: res.data[0].followed,
         });
       })
       .catch((err) => {
         this.errorHandler(err);
       });
-    const arr = this.state.followed.filter(
-      (name) => name === this.props.name
-    );
+
+    const arr = this.state.followed.filter((email) => email === this.props.email);
     if (arr.length === 1) {
       this.setState({ follow: 1, followText: "Unfollow" });
     }
     if (this.state.follow === 0) {
       authorizedRequestsHandler()
-        .patch(followOrUnfollowUserEndpoint + `/${this.props.name}`, null)
+        .patch(followOrUnfollowUserEndpoint + `/${this.props.email}`, null)
         .then((res) => {
           console.log(res);
           this.setState({
@@ -174,7 +191,10 @@ class MyDescription extends Component {
         });
     } else if (this.state.follow === 1) {
       authorizedRequestsHandler()
-        .patch(followOrUnfollowUserEndpoint + `/${this.props.name}?reverse=1`, null)
+        .patch(
+          followOrUnfollowUserEndpoint + `/${this.props.email}?reverse=1`,
+          null
+        )
         .then((res) => {
           this.setState({
             follow: 0,
@@ -188,8 +208,29 @@ class MyDescription extends Component {
     }
   };
 
+  showList = () => {
+    this.setState({ listDisplay: true });
+  };
+
+  hideList=()=>{
+    this.setState({listDisplay:false});
+  }
   render() {
+    console.log(this.state.namearray);
     let description = null;
+    let data = null;
+    data = this.state.followedArr.map((arr) => {
+      return <li className={styles.usersList} key={arr}> 
+      <Link
+      className={styles.name}
+      to={{
+        pathname: "/profile",
+        state: { email: arr },
+      }}
+    >{arr}
+    </Link>
+    </li>;
+    });
     if (this.props.spinner) {
       description = <Spinner />;
     } else {
@@ -243,7 +284,7 @@ class MyDescription extends Component {
           <div className={styles.description}>
             <h2>{this.props.name}</h2>
             <h3>{this.props.role}</h3>
-            <ul>
+            <ul className={styles.descriptionList}>
               <li>
                 <i className="fa fa-envelope" />
                 {this.props.email}
@@ -278,9 +319,24 @@ class MyDescription extends Component {
               >
                 {this.state.followText}
               </button>
-            ) : <button className={styles.following+" "+styles.follow}>Following ({this.state.followedCount})</button>}
+            ) : (
+              <button
+                className={styles.following + " " + styles.follow}
+                onClick={this.showList}
+              >
+                Following ({this.state.followedCount})
+              </button>
+            )}
             {this.state.updateAction ? <SmallSpinner /> : null}
           </div>
+          {this.state.listDisplay ? (
+            <div className={styles.overlay} onClick={this.hideList}>
+              <div className={styles.popup}>
+                <p>Friends List</p>
+                <ul>{data}</ul>
+              </div>
+            </div>
+          ) : null}
           {this.state.popupVisible ? (
             <EditProfile
               close={this.closePopup}
@@ -313,6 +369,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getUserData: () => dispatch(getUserData()),
+    errorOccurred: () => dispatch(errorOccurred()),
   };
 };
 
