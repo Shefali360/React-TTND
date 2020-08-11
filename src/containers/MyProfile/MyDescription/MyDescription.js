@@ -51,23 +51,23 @@ class MyDescription extends Component {
       .catch((err) => {
         this.errorHandler(err);
       });
-      let namearray=[];
-      for(let array=0;array<this.state.followedArr.length;array++){
-      const filtered = {};
-      filtered["email"] = this.state.followedArr[array];
-      await authorizedRequestsHandler()
-      .get(userEndpoint + `?skip=0&limit=1&` + stringify(filtered))
-      .then((res) => {
-        const name=res.data[0].name;
-        namearray.push(name);
-        this.setState({
-         namearray:namearray
-        });
-      })
-      .catch((err) => {
-        this.errorHandler(err);
-      });
-    }
+    //   let namearray=[];
+    //   for(let array=0;array<this.state.followedArr.length;array++){
+    //   const filtered = {};
+    //   filtered["email"] = this.state.followedArr[array];
+    //   await authorizedRequestsHandler()
+    //   .get(userEndpoint + `?skip=0&limit=1&` + stringify(filtered))
+    //   .then((res) => {
+    //     const name=res.data[0].name;
+    //     namearray.push(name);
+    //     this.setState({
+    //      namearray:namearray
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     this.errorHandler(err);
+    //   });
+    // }
     this.setState({ followedCount: this.state.followedArr.length });
   };
 
@@ -104,7 +104,6 @@ class MyDescription extends Component {
         this.setState({ spinner: false });
       })
       .catch((err) => {
-        console.log(err);
         this.setState({ spinner: false });
         this.errorHandler(err);
       });
@@ -143,7 +142,6 @@ class MyDescription extends Component {
 
   uploadPicture = () => {
     let formData = new FormData();
-    console.log(this.state.picture);
     if (this.state.picture) {
       formData.append(
         "picture",
@@ -170,7 +168,6 @@ class MyDescription extends Component {
       .catch((err) => {
         this.errorHandler(err);
       });
-
     const arr = this.state.followed.filter((email) => email === this.props.email);
     if (arr.length === 1) {
       this.setState({ follow: 1, followText: "Unfollow" });
@@ -179,7 +176,10 @@ class MyDescription extends Component {
       authorizedRequestsHandler()
         .patch(followOrUnfollowUserEndpoint + `/${this.props.email}`, null)
         .then((res) => {
-          console.log(res);
+        const token = JSON.parse(localStorage.getItem("token"));
+        token["id_token"] = res.data;
+        localStorage.setItem("token", JSON.stringify(token));
+        this.props.getUserData();
           this.setState({
             follow: 1,
             followText: "Unfollow",
@@ -196,6 +196,10 @@ class MyDescription extends Component {
           null
         )
         .then((res) => {
+          const token = JSON.parse(localStorage.getItem("token"));
+          token["id_token"] = res.data;
+          localStorage.setItem("token", JSON.stringify(token));
+          this.props.getUserData();
           this.setState({
             follow: 0,
             followText: "Follow",
@@ -216,7 +220,6 @@ class MyDescription extends Component {
     this.setState({listDisplay:false});
   }
   render() {
-    console.log(this.state.namearray);
     let description = null;
     let data = null;
     data = this.state.followedArr.map((arr) => {

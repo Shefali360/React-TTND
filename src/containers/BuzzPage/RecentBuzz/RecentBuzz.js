@@ -36,7 +36,8 @@ class RecentBuzzData extends Component {
     editClicked: false,
     deletePopupVisible: false,
     imageExceeded:false,
-    sizeExceeded:false
+    sizeExceeded:false,
+    zeroFollowed:false
   };
 
   limit = 5;
@@ -92,11 +93,14 @@ class RecentBuzzData extends Component {
   };
 
   getBuzz = (skip) => {
-    if (this.props.filters) {
-      const filter = {};
+    if(this.props.heading==="Friends Buzz"&& this.props.filters.length===0){
+      this.setState({zeroFollowed:true,spinner:false});
+    }else
+     if (this.props.filters){
+      let filter = {};
       filter["userId"] = this.props.filters;
       this.fetchBuzz(skip, filter);
-    } else {
+    }else {
       this.fetchBuzz(skip, this.state.filters);
     }
   };
@@ -230,7 +234,6 @@ class RecentBuzzData extends Component {
         }, 1000);
       })
       .catch((err) => {
-        console.log(err);
         this.setState({ spinner: false });
         this.errorHandler(err);
       });
@@ -251,7 +254,6 @@ class RecentBuzzData extends Component {
         });
       })
       .catch((err) => {
-        console.log(err);
         this.setState({ error: true });
         this.errorHandler(err);
       });
@@ -299,11 +301,13 @@ class RecentBuzzData extends Component {
           </i>
         </div>
       );
-    } else if (this.state.buzz.length === 0) {
+    }else if(this.state.zeroFollowed){
+      buzzData=<p>Follow people to look at their buzz...</p>
+    }else if (this.state.buzz.length === 0) {
       buzzData = (
         <p>No buzz going around.You need to post something to create one!</p>
       );
-    } else {
+    }else {
       let buzz = this.state.buzz;
       buzzData = buzz.map((buzz) => {
         const todayDate = new Date();

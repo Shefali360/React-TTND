@@ -143,6 +143,9 @@ class UserComplaintList extends Component {
     if (this.state.status) {
       filters["status"] = this.state.status;
     }
+    if(this.state.searchInput){
+      filters["issueId"]=this.state.searchInput.trim().toUpperCase();
+      }
     this.setState({ filters: filters, skip: 0, hasMore: false });
     this.fetchComplaints(0, filters, 1);
   };

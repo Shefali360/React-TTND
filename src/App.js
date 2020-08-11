@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 import BuzzPage from './containers/BuzzPage/BuzzPage';
+import FriendsBuzzpage from './containers/FriendsBuzz/FriendsBuzz';
 import ComplaintPage from './containers/ComplaintPage/ComplaintPage';
 import ResolvedPage from './containers/ResolvedPage/AllComplaintsList/AllComplaintsList';
 import About from './components/About/AboutInfo';
@@ -34,6 +35,7 @@ const App=()=>{
         <PrivateRoute exact path="/myprofile"><MyProfile/></PrivateRoute>
         <ProtectedRoute exact path="/profile"><Profile/></ProtectedRoute>
         <PrivateRoute exact path="/buzz"><BuzzPage/></PrivateRoute>
+        <PrivateRoute exact path="/friendsbuzz"><FriendsBuzzpage/></PrivateRoute>
         <AuthenticateComplaint exact path="/complaint"><ComplaintPage/></AuthenticateComplaint>
         <AuthenticatedAdminRoute exact path="/resolved"><ResolvedPage/></AuthenticatedAdminRoute>
         <AuthenticatedSuperadminRoute exact path="/superadmin"><SuperAdmin/></AuthenticatedSuperadminRoute>

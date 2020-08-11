@@ -11,6 +11,7 @@ const Navbar = (props) => {
       <ul className={styles.list}>
         <NavbarItem link="/myprofile">MY PROFILE</NavbarItem>
         <NavbarItem link="/profile"> PROFILE</NavbarItem>
+        <NavbarItem link="/friendsbuzz">FRIENDS BUZZ</NavbarItem>
         <NavbarItem link="/buzz">BUZZ</NavbarItem>
         <NavbarItem link="/complaint">COMPLAINTS</NavbarItem>
         {props.user &&
