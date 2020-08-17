@@ -20,6 +20,8 @@ import MyProfile from './containers/MyProfile/MyProfile';
 import Profile from './containers/Profile/Profile';
 import ProtectedRoute from './containers/AuthenticatedRoute/ProfileProtectedRoute';
 import AuthenticateComplaint from './containers/AuthenticatedRoute/AuthenticatedComplaintRoute';
+import Chats from './containers/Chats/Chats';
+import { BrowserRouter } from 'react-router-dom';
 const App=()=>{
   return (
     <Router>
@@ -36,6 +38,7 @@ const App=()=>{
         <ProtectedRoute exact path="/profile"><Profile/></ProtectedRoute>
         <PrivateRoute exact path="/buzz"><BuzzPage/></PrivateRoute>
         <PrivateRoute exact path="/friendsbuzz"><FriendsBuzzpage/></PrivateRoute>
+        <PrivateRoute exact path="/chats"><Chats/></PrivateRoute>
         <AuthenticateComplaint exact path="/complaint"><ComplaintPage/></AuthenticateComplaint>
         <AuthenticatedAdminRoute exact path="/resolved"><ResolvedPage/></AuthenticatedAdminRoute>
         <AuthenticatedSuperadminRoute exact path="/superadmin"><SuperAdmin/></AuthenticatedSuperadminRoute>

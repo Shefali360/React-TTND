@@ -14,7 +14,7 @@ import {
   userEndpoint,
   followOrUnfollowUserEndpoint,
 } from "../../../APIs/APIEndpoints";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { getUserData, errorOccurred } from "../../../store/actions/index";
 import { connect } from "react-redux";
 import buzzStyles from "../../BuzzPage/CreateBuzz/CreateBuzz.module.css";
@@ -34,7 +34,7 @@ class MyDescription extends Component {
     updateAction: false,
     followedCount: 0,
     listDisplay: false,
-    namearray:[]
+    namearray: [],
   };
 
   followedCounting = async () => {
@@ -168,7 +168,9 @@ class MyDescription extends Component {
       .catch((err) => {
         this.errorHandler(err);
       });
-    const arr = this.state.followed.filter((email) => email === this.props.email);
+    const arr = this.state.followed.filter(
+      (email) => email === this.props.email
+    );
     if (arr.length === 1) {
       this.setState({ follow: 1, followText: "Unfollow" });
     }
@@ -176,10 +178,10 @@ class MyDescription extends Component {
       authorizedRequestsHandler()
         .patch(followOrUnfollowUserEndpoint + `/${this.props.email}`, null)
         .then((res) => {
-        const token = JSON.parse(localStorage.getItem("token"));
-        token["id_token"] = res.data;
-        localStorage.setItem("token", JSON.stringify(token));
-        this.props.getUserData();
+          const token = JSON.parse(localStorage.getItem("token"));
+          token["id_token"] = res.data;
+          localStorage.setItem("token", JSON.stringify(token));
+          this.props.getUserData();
           this.setState({
             follow: 1,
             followText: "Unfollow",
@@ -216,23 +218,26 @@ class MyDescription extends Component {
     this.setState({ listDisplay: true });
   };
 
-  hideList=()=>{
-    this.setState({listDisplay:false});
-  }
+  hideList = () => {
+    this.setState({ listDisplay: false });
+  };
   render() {
     let description = null;
     let data = null;
     data = this.state.followedArr.map((arr) => {
-      return <li className={styles.usersList} key={arr}> 
-      <Link
-      className={styles.name}
-      to={{
-        pathname: "/profile",
-        state: { email: arr },
-      }}
-    >{arr}
-    </Link>
-    </li>;
+      return (
+        <li className={styles.usersList} key={arr}>
+          <Link
+            className={styles.name}
+            to={{
+              pathname: "/profile",
+              state: { email: arr },
+            }}
+          >
+            {arr}
+          </Link>
+        </li>
+      );
     });
     if (this.props.spinner) {
       description = <Spinner />;
@@ -312,16 +317,21 @@ class MyDescription extends Component {
               ) : null}
             </ul>
             {this.props.email !== this.props.user.email ? (
-              <button
-                className={
-                  styles.follow +
-                  " " +
-                  (this.state.updateAction ? styles.disableClick : null)
-                }
-                onClick={this.followOrUnfollowUser}
-              >
-                {this.state.followText}
-              </button>
+              <div>
+                <button
+                  className={
+                    styles.follow +
+                    " " +
+                    (this.state.updateAction ? styles.disableClick : null)
+                  }
+                  onClick={this.followOrUnfollowUser}
+                >
+                  {this.state.followText}
+                </button>
+                <Link className={styles.message} to={{pathname:"/chats",state:{name:this.props.name}}}>
+                  Message
+                </Link>
+              </div>
             ) : (
               <button
                 className={styles.following + " " + styles.follow}

@@ -19,6 +19,7 @@ class BuzzPage extends Component {
           submitted={this.state.buzzSubmitted}
           heading="Recent Buzz"
         />
+
       </div>
     );
   }

@@ -1,0 +1,26 @@
+.chatList{
+    margin-top:20px;
+    border-radius:5px;
+    border:2px solid #ccc;
+    margin-bottom: 20px;
+    position: relative;
+    width:100%;
+}
+
+.chatList h4{
+    padding:10px 20px;
+    background-color: #eeeeee;
+    border-bottom: 2px solid #ccc;
+}
+
+.names{
+    list-style-type: none;
+    padding:15px 20px;
+}
+
+.names li{
+    font-size:17px;
+    text-decoration: underline;
+    color:#D8763A;
+    font-weight: bold;
+}

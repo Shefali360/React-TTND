@@ -13,6 +13,7 @@ const Navbar = (props) => {
         <NavbarItem link="/profile"> PROFILE</NavbarItem>
         <NavbarItem link="/friendsbuzz">FRIENDS BUZZ</NavbarItem>
         <NavbarItem link="/buzz">BUZZ</NavbarItem>
+        <NavbarItem link="/chats">CHATS</NavbarItem>
         <NavbarItem link="/complaint">COMPLAINTS</NavbarItem>
         {props.user &&
         (props.user.role === "Admin" || props.user.role === "SuperAdmin") ? (
